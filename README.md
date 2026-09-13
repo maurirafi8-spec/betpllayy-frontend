@@ -1,3 +1,5 @@
-# BetPllayy Frontend V7.4
+# BetPllayy Frontend V7.5 — Sinuca Pro
 
-Deploy automático no Worker `betpllay`.
+Substitua estes arquivos no repositório `betpllayy-frontend`.
+
+Mantenha o `.assetsignore` já existente no GitHub.
