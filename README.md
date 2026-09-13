@@ -1,9 +1,3 @@
-# BetPllayy Frontend V7.3
+# BetPllayy Frontend V7.4
 
-Cloudflare Worker: `betpllay`
-Deploy command: `npx wrangler deploy`
-
-Arquivos importantes:
-- index.html
-- wrangler.jsonc
-- .assetsignore
+Deploy automático no Worker `betpllay`.
