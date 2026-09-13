@@ -1,0 +1,1596 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1010">
+<title>BetPllayy</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#0d1010;--panel:#151a19;--panel2:#1b211f;--text:#f5f7f6;--muted:#9aa7a2;--green:#90ff47;--line:#27302d;--amber:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding-bottom:105px}
+.app{max-width:720px;margin:auto;padding:18px 14px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.brand{display:flex;align-items:center;gap:10px}
+.logo{width:48px;height:48px;border-radius:16px;background:linear-gradient(145deg,#9aff52,#56e82a);display:grid;place-items:center;color:#071006;font-weight:1000;font-size:24px}
+h1{font-size:22px;margin:0}.muted{color:var(--muted)}.balance{border:1px solid var(--line);background:var(--panel);padding:10px 14px;border-radius:17px;text-align:right}.balance small{display:block;color:var(--muted)}.balance b{font-size:21px;color:var(--green)}
+.hero{border:1px solid #2f4434;background:linear-gradient(135deg,#172019,#101513);border-radius:22px;padding:19px;margin-bottom:18px}.hero h2{margin:0 0 6px;font-size:25px}.hero p{margin:0;color:#b8c3be}.homeTools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.homeMode{border:1px solid var(--line);background:var(--panel);color:#fff;border-radius:12px;padding:11px;font-weight:900}.homeMode.active{background:var(--green);color:#071006}.search{width:100%;padding:12px 13px;border-radius:13px;border:1px solid var(--line);background:var(--panel);color:#fff;font-size:15px;margin-bottom:10px}.liveBoard{margin-bottom:12px}.liveCard{background:var(--panel);border:1px solid #493338;border-radius:16px;padding:13px;margin:8px 0}.liveCard .score{font-size:23px;font-weight:1000;margin-top:5px}.liveCard .liveLabel{color:#ff8189;font-size:11px;font-weight:1000}.ruleBtn{background:transparent;color:#cdd7d2;border:0;padding:0;font-size:12px;text-decoration:underline}
+.tabs{display:flex;gap:8px;margin:12px 0}.tab{flex:1;padding:11px;border-radius:13px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}.tab.active{color:#fff}
+.sport-tabs,.market-tabs{display:flex;gap:8px;overflow:auto;padding:2px 0 10px}.sport-tab,.market-tab{white-space:nowrap;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:#fff}.sport-tab.active,.market-tab.active{background:var(--green);color:#071006;font-weight:900}
+.selector{width:100%;background:var(--panel);border:1px solid var(--line);color:#fff;border-radius:13px;padding:12px;margin-bottom:8px}.feed-meta{font-size:12px;color:var(--muted);margin:6px 2px 12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.match{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;margin:11px 0}.head{display:flex;justify-content:space-between;gap:10px;margin-bottom:11px}.league{font-size:12px;color:var(--muted)}.teams{font-weight:800;margin-top:4px}.time{color:var(--green);font-size:12px;font-weight:800;text-align:right}
+.odds{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.odds.two{grid-template-columns:repeat(2,1fr)}.odd{border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:12px;padding:11px;display:flex;justify-content:space-between;gap:8px}.odd b{color:var(--green)}.odd.selected{border-color:var(--green);box-shadow:inset 0 0 0 2px var(--green);background:#22351d}
+.matchActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.more{width:100%;background:transparent;color:#d8e1dd;border:1px solid var(--line);border-radius:12px;padding:10px;font-weight:800}.builder{background:#22351d;color:var(--green);border-color:#426a38}.earlyPromo{font-size:11px;color:#c8ff9e;margin-top:8px;padding:7px 9px;border-radius:10px;background:#182319;border:1px solid #304b2d}.liveBox{display:flex;align-items:center;gap:7px;margin-top:7px;font-size:13px;font-weight:900}.liveDot{width:8px;height:8px;border-radius:50%;background:#ff4f5e;box-shadow:0 0 0 3px #ff4f5e22}.liveScore{font-size:18px;color:#fff}.liveText{color:#ff8189;font-size:11px}.paidEarly{display:inline-block;margin-top:5px;padding:5px 8px;border-radius:999px;background:#332c10;border:1px solid #6c5a18;color:#ffe478;font-size:11px;font-weight:900}.empty,.loading{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center;color:var(--muted)}
+.slipbar{position:fixed;bottom:0;left:0;right:0;background:#0d1010f2;border-top:1px solid var(--line);padding:10px 14px max(10px,env(safe-area-inset-bottom));z-index:20}.slipin{max-width:720px;margin:auto;display:flex;gap:10px;align-items:center}.slipinfo{flex:1;min-width:0}.slipinfo small{color:var(--muted)}.slipinfo b{display:block}.countBadge{display:inline-block;background:var(--green);color:#071006;font-weight:900;padding:2px 7px;border-radius:999px;margin-left:3px}.btn{border:0;background:var(--green);color:#071006;font-weight:900;padding:13px 17px;border-radius:14px}.btn:disabled{opacity:.35}.secondary{background:var(--panel2);color:#fff;border:1px solid var(--line)}.danger{background:transparent;color:#ff858c;border:1px solid #5a3034}
+.modal{display:none;position:fixed;inset:0;background:#000c;align-items:flex-end;z-index:50}.modal.open{display:flex}.sheet{width:100%;max-width:720px;margin:auto;background:#131817;border-radius:24px 24px 0 0;padding:18px 16px max(22px,env(safe-area-inset-bottom));max-height:90vh;overflow:auto}.sheet h3{margin:0 0 4px}
+.selection{border:1px solid var(--line);background:var(--panel2);border-radius:13px;padding:11px;margin:8px 0}.selectionTop{display:flex;justify-content:space-between;gap:8px}.remove{background:transparent;border:0;color:#ff858c;font-size:18px}.tag{font-size:11px;padding:3px 7px;border-radius:999px;border:1px solid var(--line);display:inline-block;margin-top:5px}.auto{color:var(--green)}.manual{color:var(--amber)}
+.marketOutcomes{display:grid;gap:8px;margin-top:10px}.marketOutcome{border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:12px;padding:12px;text-align:left}.marketOutcome strong{float:right;color:var(--green)}.marketOutcome.selected{border-color:var(--green)}
+.input{width:100%;padding:13px;border-radius:13px;background:#0d1110;color:#fff;border:1px solid var(--line);font-size:16px}.summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.summary div{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px}.summary small{display:block;color:var(--muted)}.summary b{font-size:18px;color:var(--green)}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:12px;margin-bottom:9px}.item small{color:var(--muted)}.legHist{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.toast{display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#19221e;border:1px solid #33523b;padding:10px 14px;border-radius:12px;z-index:100}
+.notice{padding:13px;border-radius:13px;background:#201d12;border:1px solid #4a4022;color:#f3d875;margin-bottom:13px;display:none}.refHero{background:linear-gradient(135deg,#19231a,#111513);border:1px solid #304b2d;border-radius:18px;padding:16px;margin-bottom:12px}.refCode{font-size:24px;font-weight:1000;color:var(--green);letter-spacing:1px}.refStats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.refStat{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:10px;text-align:center}.refStat b{display:block;font-size:19px;color:var(--green)}.progress{height:10px;background:#0e1211;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:8px 0}.progress>span{display:block;height:100%;background:var(--green);border-radius:999px}.refInvite{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px;margin:8px 0}.refActions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.refInfo{font-size:12px;color:var(--muted);line-height:1.45}
+.activeSlips{margin-bottom:12px}.activeSlipsHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.activeSlip{background:var(--panel);border:1px solid #304b2d;border-radius:15px;padding:11px;margin:7px 0}.activeSlipTop{display:flex;justify-content:space-between;gap:10px}.activeCount{background:var(--green);color:#071006;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:900}.leagueRow{display:grid;grid-template-columns:1fr 50px;gap:8px;align-items:center}.leagueRow .selector{margin-bottom:8px}.favLeague,.teamFav{border:1px solid var(--line);background:var(--panel);color:#d7e0dc;border-radius:13px;font-size:20px}.favLeague{height:47px;margin-bottom:8px}.favLeague.active,.teamFav.active{color:#ffd95a;border-color:#6a5b26;background:#2a2514}.teamRows{display:grid;gap:4px}.teamRow{display:flex;align-items:center;gap:7px;font-weight:800}.teamFav{width:30px;height:30px;border-radius:9px;font-size:16px;padding:0;flex:0 0 auto}.market-categories{display:flex;gap:7px;overflow:auto;padding:5px 0 10px}.market-category{white-space:nowrap;border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:999px;padding:9px 12px;font-weight:800}.market-category.active{background:var(--green);color:#071006}.marketSectionTitle{font-size:12px;color:var(--muted);margin-top:4px}.favHint{font-size:11px;color:var(--muted);margin:3px 0 10px}.profileHero{background:linear-gradient(135deg,#182019,#101513);border:1px solid #304b2d;border-radius:20px;padding:17px;margin-bottom:12px}.profileUser{display:flex;align-items:center;gap:12px}.avatar{width:54px;height:54px;border-radius:18px;background:var(--green);color:#071006;display:grid;place-items:center;font-size:24px;font-weight:1000}.profileName{font-size:20px;font-weight:1000}.statsGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.statBox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px}.statBox small{display:block;color:var(--muted)}.statBox b{display:block;font-size:20px;color:var(--green);margin-top:3px}.promoGrid{display:grid;gap:9px}.promoCard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px}.promoIcon{font-size:24px}.promoTitle{font-weight:1000;margin:4px 0}.historySummary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.historyFilter{display:flex;gap:7px;overflow:auto;padding-bottom:8px}.historyFilter button{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:#fff;border-radius:999px;padding:9px 12px;font-weight:800}.historyFilter button.active{background:var(--green);color:#071006}.profileRow{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.profileRow:last-child{border-bottom:0}.profileRow span{color:var(--muted)}
+.casinoHero{background:linear-gradient(135deg,#251b13,#15110e);border:1px solid #56401e;border-radius:20px;padding:17px;margin-bottom:12px}.casinoHero h2{margin:0 0 5px}.casinoGrid{display:grid;grid-template-columns:1fr;gap:10px}.casinoCard{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px}.casinoIcon{font-size:38px}.casinoCard h3{margin:5px 0}.casinoCard p{color:var(--muted);margin:0 0 12px}.casinoPlayBtn{width:100%}.casinoHistoryRow{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px;margin:7px 0}.casinoHistoryTop{display:flex;justify-content:space-between;gap:10px}.casinoWin{color:var(--green);font-weight:900}.casinoLose{color:#ff858c;font-weight:900}.casinoReels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.casinoReel{height:82px;border-radius:16px;background:#0d1110;border:1px solid #3a443f;display:grid;place-items:center;font-size:42px}.casinoBetQuick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:9px 0}.casinoBetQuick button,.casinoChoice{border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:12px;padding:10px;font-weight:800}.casinoChoice.active{border-color:var(--green);background:#22351d;color:var(--green)}.casinoChoices{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:10px 0}.rouletteNumber{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0d1110;color:#fff;font-size:16px}.casinoResult{margin-top:12px;padding:13px;border-radius:14px;border:1px solid var(--line);background:var(--panel)}.casinoResult strong{font-size:19px}.casinoLimits{font-size:12px;color:var(--muted);margin-top:6px}@media(min-width:560px){.casinoGrid{grid-template-columns:repeat(3,1fr)}}
+.casinoSession{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.casinoSession .statBox b{font-size:17px}.casinoFilter{display:flex;gap:7px;overflow:auto;margin:8px 0 10px}.casinoFilter button{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:#fff;border-radius:999px;padding:8px 11px;font-weight:800}.casinoFilter button.active{background:var(--green);color:#071006}.casinoPrefs{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:12px;margin:12px 0}.casinoPrefs select{width:100%;padding:11px;border-radius:11px;background:#0d1110;color:#fff;border:1px solid var(--line);margin-top:7px}.spin{animation:slotSpin .18s linear infinite}@keyframes slotSpin{0%{transform:translateY(-5px);opacity:.6}50%{transform:translateY(5px);opacity:1}100%{transform:translateY(-5px);opacity:.6}}.rouletteWheel{width:170px;height:170px;border-radius:50%;margin:14px auto;border:8px solid #3a2b16;background:conic-gradient(#b82025 0 10deg,#171717 10deg 20deg,#b82025 20deg 30deg,#171717 30deg 40deg,#b82025 40deg 50deg,#171717 50deg 60deg,#b82025 60deg 70deg,#171717 70deg 80deg,#b82025 80deg 90deg,#171717 90deg 100deg,#b82025 100deg 110deg,#171717 110deg 120deg,#b82025 120deg 130deg,#171717 130deg 140deg,#b82025 140deg 150deg,#171717 150deg 160deg,#b82025 160deg 170deg,#171717 170deg 180deg,#b82025 180deg 190deg,#171717 190deg 200deg,#b82025 200deg 210deg,#171717 210deg 220deg,#b82025 220deg 230deg,#171717 230deg 240deg,#b82025 240deg 250deg,#171717 250deg 260deg,#b82025 260deg 270deg,#171717 270deg 280deg,#b82025 280deg 290deg,#171717 290deg 300deg,#b82025 300deg 310deg,#171717 310deg 320deg,#b82025 320deg 330deg,#171717 330deg 340deg,#b82025 340deg 350deg,#171717 350deg 360deg);position:relative;transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}.rouletteWheel:after{content:"";position:absolute;inset:42px;border-radius:50%;background:#0f1312;border:3px solid #6b5124}.roulettePointer{text-align:center;font-size:28px;margin-bottom:-10px}.diceNum{font-size:72px;font-weight:1000;text-align:center;margin:10px 0}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<main class="app">
+<div id="notice" class="notice">Abra o BetPllayy pelo Telegram para entrar na sua conta.</div>
+
+<div class="top">
+ <div class="brand"><div class="logo">B</div><div><h1>BetPllayy</h1><div class="muted" id="hello">Carregando...</div></div></div>
+ <div class="balance"><small>SALDO</small><b id="balance">R$ 0,00</b></div>
+</div>
+
+<section class="hero">
+  <h2>🔥 BetPllayy</h2>
+  <p>Esportes, mercados, múltiplas, acompanhamento ao vivo e Casino.</p>
+  <div style="margin-top:10px"><button class="ruleBtn" id="openRules">Ver regras e pagamento antecipado</button></div>
+</section>
+
+<div class="tabs">
+  <button class="tab active" data-tab="games">Jogos</button>
+  <button class="tab" data-tab="casino">Casino</button>
+  <button class="tab" data-tab="history">Histórico</button>
+  <button class="tab" data-tab="referral">Indicar</button>
+  <button class="tab" data-tab="profile">Perfil</button>
+</div>
+
+<section id="gamesView">
+  <div id="activeSlipsHome" class="activeSlips" style="display:none"></div>
+  <div class="sport-tabs">
+    <button class="sport-tab active" data-category="football">⚽ Futebol</button>
+    <button class="sport-tab" data-category="basketball">🏀 Basquete</button>
+  </div>
+  <div class="leagueRow">
+    <select id="leagueSelect" class="selector"></select>
+    <button id="favLeagueBtn" class="favLeague" title="Favoritar campeonato">☆</button>
+  </div>
+  <div class="favHint">★ Favoritos aparecem primeiro</div>
+  <div class="homeTools">
+    <button class="homeMode active" data-home-mode="upcoming">📅 PRÓXIMOS</button>
+    <button class="homeMode" data-home-mode="live">🔴 AO VIVO</button>
+  </div>
+  <input id="teamSearch" class="search" placeholder="🔎 Buscar time">
+  <div id="liveBoard" class="liveBoard" style="display:none"></div>
+  <div class="feed-meta"><span id="updatedText">Carregando...</span></div>
+  <div id="matches"><div class="loading">Carregando jogos...</div></div>
+</section>
+
+<section id="casinoView" style="display:none">
+  <div class="casinoHero">
+    <h2>🎰 Casino</h2>
+    <p class="muted" style="margin:0">Escolha um jogo e use o mesmo saldo da sua conta.</p>
+    <div id="casinoLimits" class="casinoLimits">Carregando limites...</div>
+  </div>
+  <div id="casinoSession" class="casinoSession"></div>
+
+  <div class="casinoPrefs">
+    <b>Limite de sessão (24h)</b>
+    <div class="muted" style="font-size:12px;margin-top:3px">Você pode definir um teto pessoal para as jogadas do Casino.</div>
+    <select id="casinoSessionLimit">
+      <option value="0">Sem limite</option>
+      <option value="1000">R$ 10</option>
+      <option value="2000">R$ 20</option>
+      <option value="5000">R$ 50</option>
+      <option value="10000">R$ 100</option>
+    </select>
+  </div>
+
+  <div id="casinoGames" class="casinoGrid"><div class="loading">Carregando jogos...</div></div>
+  <h3 style="margin-top:20px">Últimas jogadas</h3>
+  <div class="casinoFilter">
+    <button class="active" data-casino-filter="all">Todos</button>
+    <button data-casino-filter="slots">Slots</button>
+    <button data-casino-filter="roulette">Roleta</button>
+    <button data-casino-filter="dice">Dados</button>
+  </div>
+  <div id="casinoHistory"><div class="loading">Carregando...</div></div>
+</section>
+
+<section id="historyView" style="display:none">
+  <h3>Histórico</h3>
+  <div class="historySummary">
+    <div class="statBox"><small>Pendentes</small><b id="histPending">0</b></div>
+    <div class="statBox"><small>Ganhos</small><b id="histWon">0</b></div>
+    <div class="statBox"><small>Perdidos</small><b id="histLost">0</b></div>
+  </div>
+  <div class="historyFilter">
+    <button class="active" data-history-filter="all">Todos</button>
+    <button data-history-filter="pending">Pendentes</button>
+    <button data-history-filter="won">Ganhos</button>
+    <button data-history-filter="lost">Perdidos</button>
+    <button data-history-filter="void">Anulados</button>
+  </div>
+  <h3>Meus bilhetes</h3>
+  <div id="slipsHistory"></div>
+  <h3 style="margin-top:22px">Apostas antigas</h3>
+  <div id="legacyHistory"></div>
+</section>
+
+<section id="referralView" style="display:none">
+  <div class="refHero">
+    <h3 style="margin:0 0 5px">🎁 Indique e ganhe</h3>
+    <p class="muted" style="margin:0">Compartilhe seu link de indicação.</p>
+    <div id="refCode" class="refCode" style="margin-top:10px">...</div>
+    <div class="refActions" style="margin-top:10px">
+      <button class="btn" id="shareReferral">📤 COMPARTILHAR</button>
+      <button class="btn secondary" id="copyReferral">📋 COPIAR LINK</button>
+    </div>
+  </div>
+
+  <div class="item">
+    <b>Seu bônus de cadastro</b>
+    <div class="refInfo" id="bonusTerms">Carregando...</div>
+    <div class="progress"><span id="rolloverBar" style="width:0%"></span></div>
+    <div id="rolloverText" class="refInfo"></div>
+  </div>
+
+  <div class="item">
+    <b>Regras da indicação</b>
+    <div class="refInfo" id="referralTerms">Carregando...</div>
+  </div>
+
+  <div class="refStats">
+    <div class="refStat"><small>Indicados</small><b id="invitedCount">0</b></div>
+    <div class="refStat"><small>Qualificados</small><b id="qualifiedCount">0</b></div>
+    <div class="refStat"><small>Recompensas</small><b id="rewardCount">0</b></div>
+  </div>
+
+  <h3>Seus indicados</h3>
+  <div id="referralList"><div class="loading">Carregando...</div></div>
+</section>
+
+<section id="profileView" style="display:none">
+  <div class="profileHero">
+    <div class="profileUser">
+      <div id="profileAvatar" class="avatar">B</div>
+      <div><div id="profileName" class="profileName">Carregando...</div><div id="profileUsername" class="muted"></div></div>
+    </div>
+  </div>
+  <div class="statsGrid">
+    <div class="statBox"><small>Bilhetes</small><b id="statTotalBets">0</b></div>
+    <div class="statBox"><small>Taxa de acerto</small><b id="statHitRate">0%</b></div>
+    <div class="statBox"><small>Ganhos</small><b id="statWon">0</b></div>
+    <div class="statBox"><small>Early payout</small><b id="statEarly">0</b></div>
+    <div class="statBox"><small>Jogadas Casino</small><b id="statCasinoPlays">0</b></div>
+    <div class="statBox"><small>Prêmios Casino</small><b id="statCasinoPayout">R$ 0,00</b></div>
+    <div class="statBox"><small>Total em entradas</small><b id="statStake">R$ 0,00</b></div>
+    <div class="statBox"><small>Total recebido</small><b id="statWonValue">R$ 0,00</b></div>
+  </div>
+  <div class="item">
+    <b>Minha conta</b>
+    <div class="profileRow"><span>Saldo</span><b id="profileBalance">R$ 0,00</b></div>
+    <div class="profileRow"><span>Maior odd vencedora</span><b id="profileBiggestOdd">—</b></div>
+    <div class="profileRow"><span>Membro desde</span><b id="profileSince">—</b></div>
+  </div>
+  <h3>🔥 Promoções</h3>
+  <div class="promoGrid">
+    <div class="promoCard"><div class="promoIcon">⚡</div><div class="promoTitle">Pagamento antecipado</div><div class="muted">No futebol, a seleção de vencedor pode ser encerrada como ganha quando o time escolhido abre 2 gols de vantagem.</div></div>
+    <div class="promoCard"><div class="promoIcon">🎁</div><div class="promoTitle">Indique e ganhe</div><div class="muted">Compartilhe seu link e acompanhe suas recompensas diretamente no app.</div><button class="more" onclick="document.querySelector('[data-tab=referral]').click()" style="margin-top:9px">ABRIR INDICAÇÕES</button></div>
+    <div class="promoCard"><div class="promoIcon">🧩</div><div class="promoTitle">Criar Aposta</div><div class="muted">Combine mercados diferentes do mesmo jogo dentro do seu bilhete.</div></div>
+  </div>
+</section>
+</main>
+
+<div class="slipbar">
+  <div class="slipin">
+    <div class="slipinfo">
+      <small>Bilhete • <span class="countBadge"><span id="legCount">0</span>/13</span> seleções</small>
+      <b>Odd combinada: <span id="combinedOdd">1.00</span></b>
+    </div>
+    <button class="btn" id="openSlip" disabled>VER BILHETE</button>
+  </div>
+</div>
+
+<div class="modal" id="casinoModal"><div class="sheet">
+  <button class="btn secondary" id="closeCasino" style="float:right">Fechar</button>
+  <h3 id="casinoModalTitle">Casino</h3>
+  <p class="muted" id="casinoModalHint"></p>
+  <div id="casinoGameArea"></div>
+  <label class="muted">Valor da jogada</label>
+  <input id="casinoBet" class="input" type="number" inputmode="decimal" step="0.50" value="1.00">
+  <div class="casinoBetQuick">
+    <button onclick="setCasinoBet(0.5)">R$0,50</button>
+    <button onclick="setCasinoBet(1)">R$1</button>
+    <button onclick="setCasinoBet(2)">R$2</button>
+    <button onclick="setCasinoBet(5)">R$5</button>
+  </div>
+  <button class="btn" id="casinoPlay" style="width:100%">JOGAR</button>
+  <div id="casinoResult" class="casinoResult" style="display:none"></div>
+</div></div>
+
+<div class="modal" id="rulesModal"><div class="sheet">
+  <button class="btn secondary" id="closeRules" style="float:right">Fechar</button>
+  <h3>Regras do BetPllayy</h3>
+  <div class="selection"><b>⚡ Pagamento antecipado — 2 gols</b><br><small class="muted">No futebol, em seleção de vencedor da partida (casa ou fora), se o time escolhido abrir 2 gols de vantagem e esse placar for capturado pelo sistema, a seleção é considerada ganha. Em múltiplas, somente essa perna é encerrada; as demais continuam.</small></div>
+  <div class="selection"><b>🎟 Múltiplas</b><br><small class="muted">Até 13 seleções. As odds são revalidadas antes da confirmação.</small></div>
+  <div class="selection"><b>🧩 Criar Aposta</b><br><small class="muted">Permite combinar mercados diferentes da mesma partida no mesmo bilhete, respeitando as validações disponíveis.</small></div>
+</div></div>
+
+<div class="modal" id="marketModal"><div class="sheet">
+  <button class="btn secondary" id="closeMarket" style="float:right">Fechar</button>
+  <h3 id="marketGameTitle">Mercados</h3>
+  <p class="muted" id="marketHint">Carregando mercados...</p>
+  <div id="marketCategoryTabs" class="market-categories"></div>
+  <div id="marketTabs" class="market-tabs"></div>
+  <div id="marketContent"></div>
+</div></div>
+
+<div class="modal" id="slipModal"><div class="sheet">
+  <button class="btn secondary" id="closeSlip" style="float:right">Fechar</button>
+  <h3>Meu bilhete</h3>
+  <p class="muted">Até 13 seleções. Uma opção por mercado do mesmo jogo.</p>
+  <button class="btn danger" id="clearSlip" style="width:100%;margin-bottom:10px">🗑 LIMPAR BILHETE</button>
+  <div id="slipSelections"></div>
+  <label class="muted">Valor da entrada</label>
+  <input id="stake" class="input" type="number" inputmode="decimal" min="0.01" step="0.01" value="1.00">
+  <div class="summary">
+    <div><small>Odd combinada</small><b id="modalOdd">1.00</b></div>
+    <div><small>Retorno potencial</small><b id="potential">R$ 0,00</b></div>
+  </div>
+  <button class="btn secondary" id="shareSlip" style="width:100%;margin-bottom:9px">📤 COMPARTILHAR BILHETE</button>
+  <button class="btn" id="placeSlip" style="width:100%">CONFIRMAR BILHETE</button>
+</div></div>
+
+<script>
+const API="https://betpllayy-bot.onrender.com";
+const tg=window.Telegram?.WebApp;
+if(tg){tg.ready();tg.expand()}
+const initData=tg?.initData||"";
+const tgUser=tg?.initDataUnsafe?.user;
+const headers={"Content-Type":"application/json","X-Telegram-Init-Data":initData};
+
+const sports={
+  football:[
+    {key:"soccer_brazil_campeonato",title:"Brasileirão Série A"},
+    {key:"soccer_uefa_champs_league",title:"Champions League"},
+    {key:"soccer_epl",title:"Premier League"},
+    {key:"soccer_spain_la_liga",title:"La Liga"},
+    {key:"soccer_italy_serie_a",title:"Serie A Itália"},
+    {key:"soccer_germany_bundesliga",title:"Bundesliga"}
+  ],
+  basketball:[{key:"basketball_nba",title:"NBA"}]
+};
+
+let currentCategory="football";
+let currentSportKey=sports.football[0].key;
+let games=[];
+let slip=[];
+let balanceCents=0;
+let activeMarketEvent=null;
+let activeMarketKey=null;
+let builderMode=false;
+let liveScores={};
+let livePollTimer=null;
+let homeMode="upcoming";
+let teamSearch="";
+let maxPrizeCents=10000;
+let referralData=null;
+let preferences={favorite_sports:[],favorite_teams:[]};
+let userSlips=[];
+let activeMarketCategory="principais";
+let historyFilter="all";
+let profileData=null;
+let casinoCatalog=null;
+let casinoHistory=[];
+let casinoGame=null;
+let casinoChoice=null;
+let casinoBusy=false;
+let casinoSession=null;
+let casinoHistoryFilter="all";
+let rouletteAngle=0;
+
+const SLIP_STORAGE_PREFIX="betpllayy_slip_v55_";
+let localDraftSavedAt=0;
+let serverSyncEnabled=false;
+let serverSyncTimer=null;
+let applyingRemoteDraft=false;
+
+function slipStorageKey(){
+  const id=tgUser?.id||"guest";
+  return SLIP_STORAGE_PREFIX+String(id);
+}
+
+function currentStakeCents(){
+  const el=document.getElementById("stake");
+  const value=Number(el?.value||0);
+  return Math.max(0,Math.round(value*100));
+}
+
+function validDraftLegs(legs){
+  const now=Date.now();
+  return (Array.isArray(legs)?legs:[]).filter(l=>{
+    if(!l||!l.event_id||!l.market_key||!l.selection_id)return false;
+    if(l.commence_time){
+      const t=new Date(l.commence_time).getTime();
+      if(Number.isFinite(t)&&t<=now)return false;
+    }
+    return true;
+  }).slice(0,13);
+}
+
+function saveLocalDraft(savedAt=Date.now()){
+  localDraftSavedAt=savedAt;
+  try{
+    localStorage.setItem(slipStorageKey(),JSON.stringify({
+      version:55,
+      saved_at:savedAt,
+      stake_cents:currentStakeCents(),
+      legs:slip
+    }));
+  }catch(e){}
+}
+
+function persistSlip(){
+  saveLocalDraft();
+  if(serverSyncEnabled&&!applyingRemoteDraft)scheduleServerDraftSync();
+}
+
+function restoreSlip(){
+  try{
+    const raw=localStorage.getItem(slipStorageKey());
+    if(!raw)return;
+    const saved=JSON.parse(raw);
+    if(!saved||!Array.isArray(saved.legs))return;
+
+    localDraftSavedAt=Number(saved.saved_at||0);
+    slip=validDraftLegs(saved.legs);
+
+    if(Number(saved.stake_cents)>0){
+      const stake=document.getElementById("stake");
+      if(stake)stake.value=(Number(saved.stake_cents)/100).toFixed(2);
+    }
+  }catch(e){
+    slip=[];
+    localDraftSavedAt=0;
+  }
+}
+
+function scheduleServerDraftSync(){
+  if(!initData)return;
+  clearTimeout(serverSyncTimer);
+  serverSyncTimer=setTimeout(pushDraftToServer,650);
+}
+
+async function pushDraftToServer(){
+  if(!initData||!serverSyncEnabled)return;
+  try{
+    const d=await api("/api/draft",{
+      method:"PUT",
+      body:JSON.stringify({
+        stake_cents:currentStakeCents(),
+        legs:slip
+      })
+    });
+    const ts=Date.parse(d.updated_at||"");
+    if(Number.isFinite(ts)){
+      localDraftSavedAt=ts;
+      saveLocalDraft(ts);
+    }
+  }catch(e){
+    // Local storage remains as offline fallback.
+  }
+}
+
+async function loadServerDraft(){
+  if(!initData)return;
+
+  try{
+    const d=await api("/api/draft");
+    const serverTs=Date.parse(d.updated_at||"");
+    const hasServer=!!(d.draft&&Array.isArray(d.draft.legs));
+
+    if(hasServer&&Number.isFinite(serverTs)&&serverTs>=localDraftSavedAt){
+      applyingRemoteDraft=true;
+      slip=validDraftLegs(d.draft.legs);
+
+      if(Number(d.draft.stake_cents)>0){
+        document.getElementById("stake").value=(Number(d.draft.stake_cents)/100).toFixed(2);
+      }
+
+      saveLocalDraft(serverTs);
+      applyingRemoteDraft=false;
+    }else if(slip.length||currentStakeCents()>0){
+      serverSyncEnabled=true;
+      await pushDraftToServer();
+      return;
+    }
+
+    serverSyncEnabled=true;
+  }catch(e){
+    serverSyncEnabled=true;
+  }
+}
+
+async function clearSavedSlip(){
+  slip=[];
+  localDraftSavedAt=0;
+  try{localStorage.removeItem(slipStorageKey())}catch(e){}
+  refreshSlipBar();
+
+  if(initData){
+    try{await api("/api/draft",{method:"DELETE"})}catch(e){}
+  }
+}
+
+function startParam(){
+  return tg?.initDataUnsafe?.start_param||
+    new URLSearchParams(location.search).get("tgWebAppStartParam")||
+    "";
+}
+
+async function registerReferralFromStartParam(){
+  const param=startParam();
+  if(!param.startsWith("ref_"))return null;
+  const code=param.slice(4);
+  if(!code||!initData)return null;
+
+  try{
+    const d=await api("/api/referral/register",{
+      method:"POST",
+      body:JSON.stringify({code})
+    });
+    if(d.status==="linked")toast("🎁 Indicação registrada. Bônus de cadastro ativo!");
+    return d;
+  }catch(e){
+    // Existing accounts cannot claim a new referral; fail quietly in the UI.
+    if(!["referral_only_for_new_user","self_referral_not_allowed"].includes(e.data?.error||"")){
+      console.log("Referral:",e.data?.error||e.message);
+    }
+    return null;
+  }
+}
+
+async function importSharedSlipIfPresent(){
+  const param=startParam();
+  if(!param.startsWith("share_"))return;
+
+  const token=param.slice(6);
+  if(!token)return;
+
+  try{
+    const d=await api(`/api/shared-slips/${encodeURIComponent(token)}`);
+    const incoming=validDraftLegs(d.shared?.legs||[]);
+    if(!incoming.length)return;
+
+    const creator=d.creator?.first_name||"alguém";
+    const msg=`${creator} compartilhou um bilhete com ${incoming.length} seleção(ões) e odd aproximada ${Number(d.combined_odd||1).toFixed(2)}.\n\nAdicionar ao seu bilhete?`;
+    if(!confirm(msg))return;
+
+    const merged=[...slip];
+
+    for(const leg of incoming){
+      const existing=merged.findIndex(
+        x=>x.event_id===leg.event_id&&x.market_key===leg.market_key
+      );
+
+      if(existing>=0){
+        merged[existing]=leg;
+      }else if(merged.length<13){
+        merged.push(leg);
+      }
+    }
+
+    slip=merged.slice(0,13);
+    persistSlip();
+    refreshSlipBar();
+    toast(`✅ ${incoming.length} seleção(ões) importada(s).`);
+  }catch(e){
+    if(e.status===404)toast("Esse bilhete compartilhado expirou ou não existe.");
+    else toast("Não foi possível abrir o bilhete compartilhado.");
+  }
+}
+
+function brl(c){return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(c||0)/100)}
+function isFavoriteSport(key){return preferences.favorite_sports.includes(String(key))}
+function isFavoriteTeam(name){return preferences.favorite_teams.includes(String(name))}
+
+async function loadPreferences(){
+  if(!initData)return;
+  try{
+    const d=await api("/api/preferences");
+    preferences={
+      favorite_sports:Array.isArray(d.preferences?.favorite_sports)?d.preferences.favorite_sports:[],
+      favorite_teams:Array.isArray(d.preferences?.favorite_teams)?d.preferences.favorite_teams:[]
+    };
+  }catch(e){}
+}
+
+async function savePreferences(){
+  if(!initData)return;
+  try{
+    const d=await api("/api/preferences",{
+      method:"PUT",
+      body:JSON.stringify(preferences)
+    });
+    if(d.preferences)preferences=d.preferences;
+  }catch(e){}
+}
+
+function updateFavLeagueButton(){
+  const b=document.getElementById("favLeagueBtn");
+  if(!b)return;
+  const active=isFavoriteSport(currentSportKey);
+  b.classList.toggle("active",active);
+  b.textContent=active?"★":"☆";
+}
+
+window.toggleFavoriteTeam=async(name)=>{
+  name=String(name||"");
+  if(!name)return;
+  const idx=preferences.favorite_teams.indexOf(name);
+  if(idx>=0)preferences.favorite_teams.splice(idx,1);
+  else preferences.favorite_teams.unshift(name);
+  await savePreferences();
+  renderGames();
+};
+
+async function toggleFavoriteLeague(){
+  const idx=preferences.favorite_sports.indexOf(currentSportKey);
+  if(idx>=0)preferences.favorite_sports.splice(idx,1);
+  else preferences.favorite_sports.unshift(currentSportKey);
+  await savePreferences();
+  renderLeagueOptions();
+  updateFavLeagueButton();
+}
+
+function statusLabel(s){return ({pending:"⏳ Pendente",won:"✅ Ganhou",lost:"❌ Perdeu",void:"↩️ Anulado"})[s]||s}
+function toast(m){const e=document.getElementById("toast");e.textContent=m;e.style.display="block";setTimeout(()=>e.style.display="none",2600)}
+function formatKickoff(iso){const d=new Date(iso),n=new Date(),t=new Date(n);t.setDate(n.getDate()+1);const sd=d.toDateString()===n.toDateString(),tm=d.toDateString()===t.toDateString();return `${sd?"Hoje":tm?"Amanhã":d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})} • ${d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}`}
+function ageText(iso){const m=Math.max(0,Math.round((Date.now()-new Date(iso).getTime())/60000));return m<1?"Odds atualizadas agora":`Odds atualizadas há ${m} min`}
+function ptSelection(name,description){
+  let text=String(name||"");
+  const map={"Draw":"Empate","Yes":"Sim","No":"Não","Over":"Mais de","Under":"Menos de","Home":"Casa","Away":"Fora"};
+  if(map[text])text=map[text];
+  text=text.replace(/ or Draw$/i," ou Empate");
+  text=text.replace(/^Draw or /i,"Empate ou ");
+  text=text.replace(/ or /gi," ou ");
+  if(description){
+    const d=String(description);
+    if(d && d!==name)return {name:text,description:d};
+  }
+  return {name:text,description:description||null};
+}
+
+function setConnectionState(ok){
+  const el=document.getElementById("connectionState");
+  if(!el)return;
+  el.textContent=ok?"● Online":"● Reconectando";
+  el.style.color=ok?"":"#ffd166";
+}
+
+async function api(path,opts={}){
+  try{
+    const r=await fetch(API+path,{...opts,headers:{...headers,...(opts.headers||{})}});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw Object.assign(new Error(d.error||"Erro"),{data:d,status:r.status});
+    setConnectionState(true);
+    return d;
+  }catch(e){
+    if(!e.status)setConnectionState(false);
+    throw e;
+  }
+}
+
+async function loadAppConfig(){
+  if(!initData)return;
+  try{
+    const d=await api("/api/app-config");
+    document.title=`BetPllayy V${d.version||"6"}`;
+    if(Number(d.max_prize_cents)>0)maxPrizeCents=Number(d.max_prize_cents);
+  }catch(e){}
+}
+
+function combinedOdd(){return slip.reduce((a,l)=>a*Number(l.price),1)}
+function refreshSlipBar(){
+  document.getElementById("legCount").textContent=slip.length;
+  document.getElementById("combinedOdd").textContent=combinedOdd().toFixed(2);
+  document.getElementById("openSlip").disabled=!slip.length;
+  renderGames();
+}
+
+function findSlip(eventId,marketKey){return slip.find(l=>l.event_id===eventId&&l.market_key===marketKey)}
+function toggleSelection(leg){
+  const existingIndex=slip.findIndex(l=>l.event_id===leg.event_id&&l.market_key===leg.market_key);
+  if(existingIndex>=0){
+    if(slip[existingIndex].selection_id===leg.selection_id) slip.splice(existingIndex,1);
+    else slip[existingIndex]=leg;
+  }else{
+    if(slip.length>=13)return toast("O limite é 13 seleções por bilhete.");
+    slip.push(leg);
+  }
+  persistSlip();
+  refreshSlipBar();
+  if(activeMarketEvent) renderCurrentMarket();
+  try{tg?.HapticFeedback?.selectionChanged()}catch(e){}
+}
+
+
+function openHistoryTab(){
+  const btn=document.querySelector('[data-tab="history"]');
+  btn?.click();
+  setTimeout(()=>document.getElementById("historyView")?.scrollIntoView({behavior:"smooth"}),80);
+}
+
+function renderActiveSlipsHome(){
+  const el=document.getElementById("activeSlipsHome");
+  if(!el)return;
+  const active=(userSlips||[]).filter(x=>x.status==="pending");
+  if(!active.length){
+    el.style.display="none";
+    el.innerHTML="";
+    return;
+  }
+
+  el.style.display="block";
+  el.innerHTML=`
+    <div class="activeSlipsHead">
+      <b>🎟 Meus bilhetes ativos</b>
+      <span class="activeCount">${active.length}</span>
+    </div>
+    ${active.slice(0,3).map(x=>{
+      const pending=(x.legs||[]).filter(l=>l.status==="pending").length;
+      return `<div class="activeSlip" onclick="openHistoryTab()">
+        <div class="activeSlipTop">
+          <b>Bilhete #${x.id}</b>
+          <span class="muted">${pending} aguardando</span>
+        </div>
+        <small class="muted">${x.legs.length} seleções • Odd ${Number(x.combined_odd).toFixed(2)} • Retorno ${brl(x.potential_cents)}</small>
+      </div>`;
+    }).join("")}
+    ${active.length>3?`<button class="more" onclick="openHistoryTab()">VER TODOS OS ${active.length} BILHETES</button>`:""}
+  `;
+}
+
+function liveForEvent(eventId){
+  return liveScores[String(eventId)]||null;
+}
+
+function renderLiveBoard(){
+  const board=document.getElementById("liveBoard");
+  if(!board)return;
+  if(homeMode!=="live"){
+    board.style.display="none";
+    return;
+  }
+  board.style.display="block";
+  const arr=Object.values(liveScores).filter(s=>s?.has_score&&!s.completed);
+  const q=teamSearch.trim().toLowerCase();
+  const filtered=q?arr.filter(s=>
+    String(s.home_team||"").toLowerCase().includes(q)||
+    String(s.away_team||"").toLowerCase().includes(q)
+  ):arr;
+
+  board.innerHTML=filtered.length?filtered.map(s=>`
+    <div class="liveCard">
+      <div class="liveLabel">● AO VIVO</div>
+      <b>${s.home_team} × ${s.away_team}</b>
+      <div class="score">${s.home_score} × ${s.away_score}</div>
+      <small class="muted">Apostas pré-jogo encerradas para esta partida.</small>
+    </div>`).join(""):`<div class="empty">Nenhuma partida ao vivo encontrada nesta competição.</div>`;
+}
+
+function liveMarkup(g){
+  const s=liveForEvent(g.id);
+  if(!s||!s.has_score||s.completed)return "";
+  return `<div class="liveBox">
+    <span class="liveDot"></span>
+    <span class="liveText">AO VIVO</span>
+    <span class="liveScore">${s.home_score} × ${s.away_score}</span>
+  </div>`;
+}
+
+function liveCandidates(){
+  const now=Date.now();
+  return games.filter(g=>{
+    const start=new Date(g.commence_time).getTime();
+    if(!Number.isFinite(start))return false;
+    return start<=now && start>=now-(5*60*60*1000);
+  });
+}
+
+async function loadLiveScores(){
+  if(!initData||document.visibilityState==="hidden")return;
+  if(document.getElementById("gamesView").style.display==="none")return;
+
+  const candidates=liveCandidates();
+  if(homeMode!=="live"&&!candidates.length){
+    liveScores={};
+    renderGames();
+    renderLiveBoard();
+    return;
+  }
+
+  const ids=homeMode==="live"?"":candidates.map(g=>g.id).join(",");
+  const suffix=ids?`&event_ids=${encodeURIComponent(ids)}`:"";
+
+  try{
+    const d=await api(
+      `/api/live-scores?sport_key=${encodeURIComponent(currentSportKey)}${suffix}`
+    );
+    liveScores={};
+    for(const s of d.games||[])liveScores[String(s.id)]=s;
+    renderGames();
+    renderLiveBoard();
+  }catch(e){
+    renderLiveBoard();
+  }
+}
+
+function startLivePolling(){
+  clearInterval(livePollTimer);
+  liveScores={};
+  loadLiveScores();
+  livePollTimer=setInterval(loadLiveScores,60000);
+}
+
+function renderGames(){
+  const el=document.getElementById("matches");
+  if(homeMode==="live"){
+    el.innerHTML="";
+    return;
+  }
+  const q=teamSearch.trim().toLowerCase();
+  let visible=q?games.filter(g=>
+    String(g.home_team||"").toLowerCase().includes(q)||
+    String(g.away_team||"").toLowerCase().includes(q)
+  ):[...games];
+  visible=visible.sort((a,b)=>{
+    const af=(isFavoriteTeam(a.home_team)||isFavoriteTeam(a.away_team))?1:0;
+    const bf=(isFavoriteTeam(b.home_team)||isFavoriteTeam(b.away_team))?1:0;
+    return bf-af || new Date(a.commence_time)-new Date(b.commence_time);
+  });
+  if(!visible.length){el.innerHTML=`<div class="empty">Nenhum jogo encontrado.</div>`;return}
+  el.innerHTML=visible.map(g=>`
+    <article class="match">
+      <div class="head">
+        <div>
+          <div class="league">${g.league} • ${g.bookmaker_count||0} fontes</div>
+          <div class="teamRows">
+            <div class="teamRow"><button class="teamFav ${isFavoriteTeam(g.home_team)?"active":""}" onclick='toggleFavoriteTeam(${JSON.stringify(g.home_team)})'>${isFavoriteTeam(g.home_team)?"★":"☆"}</button><span>${g.home_team}</span></div>
+            <div class="teamRow"><button class="teamFav ${isFavoriteTeam(g.away_team)?"active":""}" onclick='toggleFavoriteTeam(${JSON.stringify(g.away_team)})'>${isFavoriteTeam(g.away_team)?"★":"☆"}</button><span>${g.away_team}</span></div>
+          </div>
+          ${liveMarkup(g)}
+        </div>
+        <div class="time">${formatKickoff(g.commence_time)}</div>
+      </div>
+      <div class="odds ${g.odds.length===2?"two":""}">
+        ${g.odds.map(o=>{
+          const sel=findSlip(g.id,"h2h");
+          const selected=sel?.name===o.name;
+          return `<button class="odd ${selected?"selected":""}" onclick='quickPick(${JSON.stringify(g.id)},${JSON.stringify(o.name)},${JSON.stringify(o.label)},this)'><span>${selected?"✓ ":""}${o.label}</span><b>${Number(o.price).toFixed(2)}</b></button>`
+        }).join("")}
+      </div>
+      ${g.category==="football"?`<div class="earlyPromo">⚡ Vencedor: se seu time abrir 2 gols de vantagem, a seleção é considerada ganha.</div>`:""}
+      <div class="matchActions">
+        <button class="more" onclick='openMarkets(${JSON.stringify(g.id)},false)'>📊 MERCADOS</button>
+        <button class="more builder" onclick='openMarkets(${JSON.stringify(g.id)},true)'>🧩 CRIAR APOSTA</button>
+      </div>
+    </article>`).join("");
+}
+
+async function quickPick(eventId,selectionName,displayLabel,buttonEl){
+  const g=games.find(x=>x.id===eventId);
+  if(!g)return;
+
+  if(buttonEl){
+    buttonEl.disabled=true;
+    buttonEl.dataset.original=buttonEl.innerHTML;
+    buttonEl.innerHTML=`<span>...</span><b>...</b>`;
+  }
+
+  try{
+    const d=await api(`/api/event/odds?sport_key=${encodeURIComponent(g.sport_key)}&event_id=${encodeURIComponent(g.id)}&market_key=h2h`);
+    const providerName=selectionName==="Empate"?"Draw":selectionName;
+    const exact=(d.event?.selections||[]).find(
+      x=>x.name===selectionName||x.name===providerName
+    );
+    if(!exact)return toast("Essa cotação não está mais disponível.");
+
+    toggleSelection({
+      event_id:g.id,
+      sport_key:g.sport_key,
+      market_key:"h2h",
+      market_label:"Resultado da partida",
+      selection_id:exact.selection_id,
+      name:exact.name,
+      description:exact.description,
+      point:exact.point,
+      price:Number(exact.price),
+      settlement_mode:exact.settlement_mode,
+      commence_time:g.commence_time,
+      early_payout_eligible:g.category==="football"&&(exact.name===g.home_team||exact.name===g.away_team),
+      game:`${g.home_team} × ${g.away_team}`
+    });
+  }catch(e){
+    toast("Não foi possível selecionar essa odd agora.");
+  }finally{
+    if(buttonEl){
+      buttonEl.disabled=false;
+      if(buttonEl.dataset.original)buttonEl.innerHTML=buttonEl.dataset.original;
+    }
+    renderGames();
+  }
+}
+
+async function loadGames(){
+  if(!initData)return;
+  document.getElementById("matches").innerHTML=`<div class="loading">Carregando jogos...</div>`;
+  try{
+    const d=await api(`/api/games?sport_key=${encodeURIComponent(currentSportKey)}`);
+    games=d.games||[];
+    // Convert quick IDs to the exact server selection IDs by asking only the cached h2h event data when selected later.
+    document.getElementById("updatedText").textContent=ageText(d.fetched_at);
+    renderGames();
+    startLivePolling();
+  }catch(e){
+    document.getElementById("updatedText").textContent="Tentando reconectar...";
+    document.getElementById("matches").innerHTML=`<div class="empty">Não foi possível carregar os jogos. Tentando novamente...</div>`;
+    setConnectionState(false);
+  }
+}
+
+function renderLeagueOptions(){
+  const s=document.getElementById("leagueSelect");
+  const list=[...sports[currentCategory]].sort((a,b)=>{
+    const af=isFavoriteSport(a.key)?1:0,bf=isFavoriteSport(b.key)?1:0;
+    return bf-af || a.title.localeCompare(b.title);
+  });
+  s.innerHTML=list.map(x=>`<option value="${x.key}">${isFavoriteSport(x.key)?"★ ":""}${x.title}</option>`).join("");
+  s.value=currentSportKey;
+  updateFavLeagueButton();
+}
+
+
+const MARKET_CATEGORIES=[
+  {key:"principais",label:"⭐ Principais"},
+  {key:"gols",label:"⚽ Gols"},
+  {key:"handicap",label:"📈 Handicap"},
+  {key:"escanteios",label:"🚩 Escanteios"},
+  {key:"cartoes",label:"🟨 Cartões"},
+  {key:"jogadores",label:"👤 Jogadores"},
+  {key:"outros",label:"Mais"}
+];
+
+function marketCategory(key){
+  const k=String(key||"").toLowerCase();
+  if(["h2h","h2h_3_way","double_chance","draw_no_bet","to_qualify","halftime_fulltime"].includes(k))return "principais";
+  if(k.startsWith("player_"))return "jogadores";
+  if(k.includes("corner"))return "escanteios";
+  if(k.includes("card"))return "cartoes";
+  if(k.includes("spread")||k.includes("handicap"))return "handicap";
+  if(
+    k.includes("total")||k.includes("btts")||k.includes("correct_score")||
+    k.includes("goal")||k.includes("score")
+  )return "gols";
+  return "outros";
+}
+
+function availableMarketCategories(){
+  const markets=activeMarketEvent?.fullMarkets||[];
+  return MARKET_CATEGORIES.filter(c=>markets.some(m=>marketCategory(m.key)===c.key));
+}
+
+function renderMarketNavigation(){
+  const markets=activeMarketEvent?.fullMarkets||[];
+  const cats=availableMarketCategories();
+  if(!cats.some(c=>c.key===activeMarketCategory)){
+    activeMarketCategory=cats[0]?.key||"principais";
+  }
+
+  document.getElementById("marketCategoryTabs").innerHTML=cats.map(c=>`
+    <button class="market-category ${c.key===activeMarketCategory?"active":""}"
+      onclick='selectMarketCategory(${JSON.stringify(c.key)})'>${c.label}</button>
+  `).join("");
+
+  const filtered=markets.filter(m=>marketCategory(m.key)===activeMarketCategory);
+  document.getElementById("marketTabs").innerHTML=filtered.map((m,i)=>`
+    <button class="market-tab ${i===0?"active":""}"
+      onclick='loadMarket(${JSON.stringify(m.key)},this)'>${m.label}</button>
+  `).join("");
+
+  if(filtered.length){
+    loadMarket(filtered[0].key,document.querySelector("#marketTabs .market-tab"));
+  }else{
+    document.getElementById("marketContent").innerHTML=`<div class="empty">Nenhum mercado nesta categoria.</div>`;
+  }
+}
+
+window.selectMarketCategory=(category)=>{
+  activeMarketCategory=category;
+  renderMarketNavigation();
+};
+
+window.openMarkets=async(eventId,isBuilder=false)=>{
+  const g=games.find(x=>x.id===eventId);if(!g)return;
+  activeMarketEvent=g;
+  builderMode=!!isBuilder;
+  document.getElementById("marketGameTitle").textContent=builderMode?`🧩 Criar Aposta • ${g.home_team} × ${g.away_team}`:`${g.home_team} × ${g.away_team}`;
+  document.getElementById("marketHint").textContent=builderMode?"Escolha opções de mercados diferentes deste jogo. Elas entram no mesmo bilhete.":"Carregando mercados disponíveis...";
+  document.getElementById("marketCategoryTabs").innerHTML="";
+  document.getElementById("marketTabs").innerHTML="";
+  document.getElementById("marketContent").innerHTML=`<div class="loading">Consultando mercados...</div>`;
+  document.getElementById("marketModal").classList.add("open");
+  try{
+    const d=await api(`/api/event/markets?sport_key=${encodeURIComponent(g.sport_key)}&event_id=${encodeURIComponent(g.id)}`);
+    g.fullMarkets=d.markets||[];
+    document.getElementById("marketHint").textContent=builderMode
+      ? `${g.fullMarkets.length} mercados • escolha várias opções deste jogo para montar sua aposta`
+      : `${g.fullMarkets.length} mercados encontrados • abra somente os que quiser para economizar créditos`;
+    activeMarketCategory="principais";
+    if(g.fullMarkets.length)renderMarketNavigation();
+    else document.getElementById("marketContent").innerHTML=`<div class="empty">Nenhum mercado adicional disponível.</div>`;
+  }catch(e){document.getElementById("marketContent").innerHTML=`<div class="empty">Não foi possível carregar os mercados.</div>`}
+};
+
+window.loadMarket=async(marketKey,btn)=>{
+  if(!activeMarketEvent)return;
+  document.querySelectorAll("#marketTabs .market-tab").forEach(x=>x.classList.remove("active"));
+  btn?.classList.add("active");
+  activeMarketKey=marketKey;
+  document.getElementById("marketContent").innerHTML=`<div class="loading">Carregando odds...</div>`;
+  try{
+    const d=await api(`/api/event/odds?sport_key=${encodeURIComponent(activeMarketEvent.sport_key)}&event_id=${encodeURIComponent(activeMarketEvent.id)}&market_key=${encodeURIComponent(marketKey)}`);
+    activeMarketEvent.marketData=activeMarketEvent.marketData||{};
+    activeMarketEvent.marketData[marketKey]=d.event;
+    renderCurrentMarket();
+  }catch(e){document.getElementById("marketContent").innerHTML=`<div class="empty">Mercado sem odds disponíveis agora.</div>`}
+};
+
+function renderCurrentMarket(){
+  const data=activeMarketEvent?.marketData?.[activeMarketKey];
+  if(!data)return;
+  const current=findSlip(activeMarketEvent.id,activeMarketKey);
+  document.getElementById("marketContent").innerHTML=`
+    <p><b>${data.market_label}</b> <span class="muted">• ${data.bookmaker_count||0} fontes</span></p>
+    <div class="marketOutcomes">
+      ${(data.selections||[]).map(s=>`
+        <button class="marketOutcome ${current?.selection_id===s.selection_id?"selected":""}"
+          onclick='addMarketSelection(${JSON.stringify(s.selection_id)})'>
+          ${(()=>{const t=ptSelection(s.name,s.description);return `${t.description?`<small class="muted">${t.description}</small><br>`:""}${t.name}${s.point!==null&&s.point!==undefined?` • ${s.point}`:""}`})()}
+          <strong>${Number(s.price).toFixed(2)}</strong>
+        </button>`).join("")}
+    </div>
+    ${builderMode?`<div class="earlyPromo" style="margin-top:12px">🧩 ${slip.filter(x=>x.event_id===activeMarketEvent.id).length} seleção(ões) deste jogo no seu bilhete.</div>`:""}`;
+}
+
+window.addMarketSelection=(selectionId)=>{
+  const data=activeMarketEvent?.marketData?.[activeMarketKey];
+  const s=data?.selections?.find(x=>x.selection_id===selectionId);if(!s)return;
+  toggleSelection({
+    event_id:activeMarketEvent.id,sport_key:activeMarketEvent.sport_key,
+    market_key:activeMarketKey,market_label:data.market_label,
+    selection_id:s.selection_id,name:s.name,description:s.description,
+    point:s.point,price:Number(s.price),settlement_mode:s.settlement_mode,
+    commence_time:activeMarketEvent.commence_time,
+    early_payout_eligible:
+      activeMarketEvent.category==="football" &&
+      (activeMarketKey==="h2h"||activeMarketKey==="h2h_3_way") &&
+      (s.name===activeMarketEvent.home_team||s.name===activeMarketEvent.away_team),
+    game:`${activeMarketEvent.home_team} × ${activeMarketEvent.away_team}`
+  });
+};
+
+document.getElementById("closeMarket").onclick=()=>document.getElementById("marketModal").classList.remove("open");
+
+function renderSlipModal(){
+  document.getElementById("slipSelections").innerHTML=slip.length?slip.map((l,i)=>`
+    <div class="selection">
+      <div class="selectionTop"><div><b>${l.game}</b><br><small class="muted">${l.market_label}</small></div><button class="remove" onclick="removeLeg(${i})">✕</button></div>
+      <div>${(()=>{const t=ptSelection(l.name,l.description);return `${t.name}${t.description?` • ${t.description}`:""}${l.point!==null&&l.point!==undefined?` • ${l.point}`:""}`})()} <b style="float:right;color:var(--green)">${Number(l.price).toFixed(2)}</b></div>
+      ${l.early_payout_eligible?`<div class="earlyPromo">⚡ Pagamento antecipado com 2 gols de vantagem</div>`:""}
+    </div>`).join(""):`<div class="empty">Bilhete vazio.</div>`;
+  updatePotential();
+}
+window.removeLeg=i=>{slip.splice(i,1);persistSlip();refreshSlipBar();renderSlipModal()};
+
+document.getElementById("openSlip").onclick=()=>{renderSlipModal();document.getElementById("slipModal").classList.add("open")};
+document.getElementById("closeSlip").onclick=()=>document.getElementById("slipModal").classList.remove("open");
+document.getElementById("clearSlip").onclick=async()=>{
+  if(!slip.length)return;
+  if(!confirm("Limpar todas as seleções deste bilhete?"))return;
+  await clearSavedSlip();
+  renderSlipModal();
+  toast("Bilhete limpo.");
+};
+document.getElementById("stake").oninput=()=>{
+  updatePotential();
+  persistSlip();
+};
+function updatePotential(){
+  const odd=combinedOdd(),value=Math.max(0,Number(document.getElementById("stake").value||0));
+  const rawCents=Math.round(value*odd*100);
+  const cappedCents=Math.min(rawCents,maxPrizeCents);
+  document.getElementById("modalOdd").textContent=odd.toFixed(2);
+  document.getElementById("potential").textContent=brl(cappedCents);
+}
+
+
+document.getElementById("shareSlip").onclick=async()=>{
+  if(!slip.length)return toast("Adicione uma seleção antes de compartilhar.");
+
+  const btn=document.getElementById("shareSlip");
+  btn.disabled=true;
+  btn.textContent="CRIANDO LINK...";
+
+  try{
+    const d=await api("/api/share-slip",{
+      method:"POST",
+      body:JSON.stringify({
+        stake_cents:currentStakeCents(),
+        legs:slip
+      })
+    });
+
+    const text=`🔥 Meu bilhete no BetPllayy\n${slip.length} seleção(ões) • Odd ${combinedOdd().toFixed(2)}\nAbra para copiar as seleções:`;
+    const telegramShare=`https://t.me/share/url?url=${encodeURIComponent(d.deep_link)}&text=${encodeURIComponent(text)}`;
+
+    if(tg?.openTelegramLink){
+      tg.openTelegramLink(telegramShare);
+    }else if(navigator.share){
+      await navigator.share({
+        title:"BetPllayy",
+        text,
+        url:d.deep_link
+      });
+    }else if(navigator.clipboard){
+      await navigator.clipboard.writeText(`${text}\n${d.deep_link}`);
+      toast("📋 Link do bilhete copiado.");
+    }else{
+      alert(`${text}\n\n${d.deep_link}`);
+    }
+  }catch(e){
+    toast("Não foi possível criar o link do bilhete.");
+  }finally{
+    btn.disabled=false;
+    btn.textContent="📤 COMPARTILHAR BILHETE";
+  }
+};
+
+document.getElementById("placeSlip").onclick=async()=>{
+  if(!slip.length)return toast("Adicione uma seleção.");
+  const stakeCents=Math.round(Number(document.getElementById("stake").value||0)*100);
+  if(stakeCents<1)return toast("Valor inválido.");
+  const btn=document.getElementById("placeSlip");btn.disabled=true;btn.textContent="VALIDANDO ODDS...";
+  try{
+    const d=await api("/api/slips",{method:"POST",body:JSON.stringify({
+      stake_cents:stakeCents,
+      legs:slip.map(l=>({
+        event_id:l.event_id,
+        sport_key:l.sport_key,
+        market_key:l.market_key,
+        selection_id:l.selection_id,
+        expected_price:Number(l.price)
+      }))
+    })});
+    balanceCents=d.balance_cents;document.getElementById("balance").textContent=brl(balanceCents);
+    slip=[];
+    localDraftSavedAt=0;
+    try{localStorage.removeItem(slipStorageKey())}catch(e){}
+    try{await api("/api/draft",{method:"DELETE"})}catch(e){}
+    refreshSlipBar();
+    document.getElementById("slipModal").classList.remove("open");
+    toast("✅ Bilhete registrado!");
+    await loadHistory();
+  }catch(e){
+    const err=e.data?.error;
+    if(err==="insufficient_balance")toast("Saldo insuficiente.");
+    else if(err==="event_started")toast("Um dos jogos já começou.");
+    else if(err==="one_selection_per_event_market")toast("Só 1 opção por mercado do mesmo jogo.");
+    else if(err==="selection_changed_or_unavailable")toast("Uma seleção não está mais disponível.");
+    else if(err==="odds_changed"){
+      const changes=e.data?.changes||[];
+      for(const c of changes){
+        const leg=slip.find(l=>l.event_id===c.event_id&&l.market_key===c.market_key&&l.selection_id===c.selection_id);
+        if(leg)leg.price=Number(c.new_price);
+      }
+      persistSlip();
+      refreshSlipBar();
+      renderSlipModal();
+      const lines=changes.slice(0,5).map(c=>`${c.game}\n${c.market_label} • ${ptSelection(c.selection_name,c.selection_description).name}\n${Number(c.old_price).toFixed(2)} → ${Number(c.new_price).toFixed(2)}`);
+      alert(`⚠️ Algumas odds mudaram:\n\n${lines.join("\n\n")}${changes.length>5?`\n\n+${changes.length-5} alteração(ões)`:``}\n\nConfira a nova odd combinada e toque em CONFIRMAR BILHETE novamente.`);
+    }
+    else toast("Não foi possível registrar o bilhete.");
+  }finally{btn.disabled=false;btn.textContent="CONFIRMAR BILHETE"}
+};
+
+async function loadMe(){
+  if(!initData){
+    document.getElementById("notice").style.display="block";
+    return;
+  }
+  try{
+    const d=await api("/api/me");
+    balanceCents=Number(d.user.balance_cents);
+    document.getElementById("balance").textContent=brl(balanceCents);
+    document.getElementById("hello").textContent=`Olá, ${d.user.first_name||tgUser?.first_name||"jogador"} 👋`;
+    return d;
+  }catch(e){
+    document.getElementById("hello").textContent=`Olá, ${tgUser?.first_name||"jogador"} 👋`;
+    setConnectionState(false);
+    return null;
+  }
+}
+
+
+async function loadReferral(){
+  if(!initData)return;
+  try{
+    const d=await api("/api/referral/me");
+    referralData=d;
+
+    document.getElementById("refCode").textContent=d.code||"";
+    document.getElementById("invitedCount").textContent=d.stats?.invited_count||0;
+    document.getElementById("qualifiedCount").textContent=d.stats?.qualified_count||0;
+    document.getElementById("rewardCount").textContent=d.stats?.rewards_credited_count||0;
+
+    const t=d.terms||{};
+    document.getElementById("bonusTerms").textContent=
+      `Bônus: ${brl(t.signup_bonus_cents)} • Rollover: ${Number(t.rollover_x||0)}x`;
+
+    document.getElementById("referralTerms").textContent=
+      `Cada indicado novo recebe ${brl(t.signup_bonus_cents)} de bônus. Sua recompensa de ${brl(t.referrer_reward_cents)} é liberada quando o indicado atingir ${brl(t.min_qualifying_deposit_cents)} de depósito qualificador.`;
+
+    const b=d.signup_bonus;
+    if(b){
+      const req=Number(b.rollover_required_cents||0);
+      const prog=Number(b.rollover_progress_cents||0);
+      const pct=req>0?Math.min(100,(prog/req)*100):100;
+      document.getElementById("rolloverBar").style.width=`${pct}%`;
+      document.getElementById("rolloverText").textContent=b.withdraw_eligible
+        ? "✅ Rollover concluído."
+        : `${brl(prog)} de ${brl(req)} em volume para concluir o rollover.`;
+    }else{
+      document.getElementById("rolloverBar").style.width="100%";
+      document.getElementById("rolloverText").textContent="Conta anterior à promoção.";
+    }
+
+    const list=d.invited||[];
+    document.getElementById("referralList").innerHTML=list.length?list.map(x=>`
+      <div class="refInvite">
+        <b>${x.first_name||"Indicado"} ${x.username?`(@${x.username})`:""}</b>
+        <div class="refInfo">Depósito qualificador: ${brl(x.qualifying_deposit_cents)}</div>
+        <div class="refInfo">${x.reward_credited?"✅ Sua recompensa foi liberada":"⏳ Aguardando atingir o valor mínimo"}</div>
+      </div>`).join(""):`<div class="empty">Você ainda não tem indicados.</div>`;
+  }catch(e){
+    document.getElementById("referralList").innerHTML=`<div class="empty">Não foi possível carregar suas indicações.</div>`;
+  }
+}
+
+async function shareReferral(){
+  if(!referralData?.referral_link)return toast("Link ainda não carregado.");
+  const t=referralData.terms||{};
+  const text=`🎁 Cadastre-se no BetPllayy pelo meu link e receba ${brl(t.signup_bonus_cents)} de bônus.`;
+
+  const telegramShare=`https://t.me/share/url?url=${encodeURIComponent(referralData.referral_link)}&text=${encodeURIComponent(text)}`;
+  if(tg?.openTelegramLink){
+    tg.openTelegramLink(telegramShare);
+  }else if(navigator.share){
+    await navigator.share({title:"BetPllayy",text,url:referralData.referral_link});
+  }else{
+    await copyReferral();
+  }
+}
+
+async function copyReferral(){
+  if(!referralData?.referral_link)return toast("Link ainda não carregado.");
+  try{
+    await navigator.clipboard.writeText(referralData.referral_link);
+    toast("📋 Link de indicação copiado.");
+  }catch(e){
+    alert(referralData.referral_link);
+  }
+}
+
+document.getElementById("shareReferral").onclick=shareReferral;
+document.getElementById("copyReferral").onclick=copyReferral;
+
+
+const casinoGameNames={slots:"Slots",roulette:"Roleta",dice:"Dados"};
+
+function casinoRequestId(){
+  if(globalThis.crypto?.randomUUID)return crypto.randomUUID().replace(/-/g,"");
+  return `${Date.now()}_${Math.random().toString(36).slice(2)}_${Math.random().toString(36).slice(2)}`;
+}
+
+function casinoResultLabel(play){
+  const r=play?.result_json||{};
+  if(play?.game==="slots")return `${(r.reels||["❔","❔","❔"]).join(" ")} • ${r.label||""}`;
+  if(play?.game==="roulette"){
+    const color={red:"Vermelho",black:"Preto",green:"Verde"}[r.color]||r.color||"";
+    return `Número ${r.number} • ${color}`;
+  }
+  if(play?.game==="dice")return `Dado: ${r.roll}`;
+  return "";
+}
+
+async function loadCasino(){
+  if(!initData)return;
+  try{
+    const [catalog,history,session]=await Promise.all([
+      api("/api/casino/catalog"),
+      api("/api/casino/history?limit=30"),
+      api("/api/casino/session")
+    ]);
+    casinoCatalog=catalog;
+    casinoHistory=history.plays||[];
+    casinoSession=session;
+    renderCasino();
+  }catch(e){
+    document.getElementById("casinoGames").innerHTML=`<div class="empty">Não foi possível carregar o Casino.</div>`;
+  }
+}
+
+function renderCasino(){
+  const min=Number(casinoCatalog?.min_bet_cents||50);
+  const max=Number(casinoCatalog?.max_bet_cents||500);
+  document.getElementById("casinoLimits").textContent=`Jogadas de ${brl(min)} até ${brl(max)}.`;
+
+  const games=casinoCatalog?.games||[];
+  document.getElementById("casinoGames").innerHTML=games.length?games.map(g=>`
+    <div class="casinoCard">
+      <div class="casinoIcon">${g.icon}</div>
+      <h3>${g.title}</h3>
+      <p>${g.description}</p>
+      <button class="btn casinoPlayBtn" onclick='openCasinoGame(${JSON.stringify(g.key)})'>JOGAR</button>
+    </div>`).join(""):`<div class="empty">Nenhum jogo disponível.</div>`;
+
+  const s=casinoSession||{};
+  document.getElementById("casinoSession").innerHTML=[
+    `<div class="statBox"><small>Jogadas 24h</small><b>${s.session_plays||0}</b></div>`,
+    `<div class="statBox"><small>Total jogado</small><b>${brl(s.session_bet_cents||0)}</b></div>`,
+    `<div class="statBox"><small>Retorno 24h</small><b>${brl(s.session_payout_cents||0)}</b></div>`,
+    `<div class="statBox"><small>Resultado líquido</small><b>${Number(s.session_net_cents||0)>=0?"+":""}${brl(s.session_net_cents||0)}</b></div>`
+  ].join("");
+
+  const limitEl=document.getElementById("casinoSessionLimit");
+  if(limitEl)limitEl.value=String(s.session_limit_cents??2000);
+
+  const history=casinoHistoryFilter==="all"
+    ? casinoHistory
+    : casinoHistory.filter(p=>p.game===casinoHistoryFilter);
+
+  document.getElementById("casinoHistory").innerHTML=history.length?history.map(p=>{
+    const profit=Number(p.payout_cents||0)-Number(p.bet_cents||0);
+    return `<div class="casinoHistoryRow">
+      <div class="casinoHistoryTop">
+        <b>${casinoGameNames[p.game]||p.game}</b>
+        <span class="${profit>0?"casinoWin":"casinoLose"}">${profit>0?`+${brl(profit)}`:profit===0?"Empate":brl(profit)}</span>
+      </div>
+      <div class="muted">${casinoResultLabel(p)}</div>
+      <small class="muted">Jogada ${brl(p.bet_cents)} • Retorno ${brl(p.payout_cents)} • ${new Date(p.created_at).toLocaleString("pt-BR")}</small>
+    </div>`;
+  }).join(""):`<div class="empty">Nenhuma jogada nesta categoria.</div>`;
+}
+
+window.setCasinoBet=(value)=>{
+  document.getElementById("casinoBet").value=Number(value).toFixed(2);
+};
+
+window.setCasinoChoice=(type,value,button)=>{
+  casinoChoice={type,value};
+  document.querySelectorAll("#casinoGameArea .casinoChoice").forEach(x=>x.classList.remove("active"));
+  if(button)button.classList.add("active");
+};
+
+window.openCasinoGame=(game)=>{
+  casinoGame=game;
+  casinoChoice=null;
+  document.getElementById("casinoResult").style.display="none";
+  const area=document.getElementById("casinoGameArea");
+  document.getElementById("casinoModalTitle").textContent=casinoGameNames[game]||"Casino";
+
+  if(game==="slots"){
+    document.getElementById("casinoModalHint").textContent="Acerte pares ou trincas.";
+    area.innerHTML=`<div class="casinoReels">
+      <div class="casinoReel" id="reel0">❔</div>
+      <div class="casinoReel" id="reel1">❔</div>
+      <div class="casinoReel" id="reel2">❔</div>
+    </div>`;
+  }else if(game==="roulette"){
+    document.getElementById("casinoModalHint").textContent="Escolha uma opção.";
+    area.innerHTML=`
+      <div class="roulettePointer">▼</div>
+      <div id="rouletteWheel" class="rouletteWheel"></div>
+      <div class="casinoChoices">
+        <button class="casinoChoice" onclick="setCasinoChoice('color','red',this);document.getElementById('rouletteExact').style.display='none'">🔴 Vermelho</button>
+        <button class="casinoChoice" onclick="setCasinoChoice('color','black',this);document.getElementById('rouletteExact').style.display='none'">⚫ Preto</button>
+        <button class="casinoChoice" onclick="setCasinoChoice('parity','even',this);document.getElementById('rouletteExact').style.display='none'">Par</button>
+        <button class="casinoChoice" onclick="setCasinoChoice('parity','odd',this);document.getElementById('rouletteExact').style.display='none'">Ímpar</button>
+        <button class="casinoChoice" onclick="setCasinoChoice('dozen','1',this);document.getElementById('rouletteExact').style.display='none'">1–12</button>
+        <button class="casinoChoice" onclick="setCasinoChoice('dozen','2',this);document.getElementById('rouletteExact').style.display='none'">13–24</button>
+        <button class="casinoChoice" onclick="setCasinoChoice('dozen','3',this);document.getElementById('rouletteExact').style.display='none'">25–36</button>
+        <button class="casinoChoice" onclick="setCasinoChoice('number','custom',this);document.getElementById('rouletteExact').style.display='block'">Número exato</button>
+      </div>
+      <input id="rouletteExact" class="rouletteNumber" type="number" inputmode="numeric" min="0" max="36" placeholder="Número de 0 a 36" style="display:none">`;
+  }else if(game==="dice"){
+    document.getElementById("casinoModalHint").textContent="Escolha a faixa do dado.";
+    area.innerHTML=`
+      <div id="diceFace" class="diceNum">🎲</div>
+      <div class="casinoChoices">
+        <button class="casinoChoice" onclick="setCasinoChoice('range','low',this)">1–3</button>
+        <button class="casinoChoice" onclick="setCasinoChoice('range','high',this)">4–6</button>
+      </div>`;
+  }
+
+  document.getElementById("casinoModal").classList.add("open");
+};
+
+async function playCasino(){
+  if(casinoBusy||!casinoGame)return;
+
+  const betCents=Math.round(Number(document.getElementById("casinoBet").value||0)*100);
+  const min=Number(casinoCatalog?.min_bet_cents||50);
+  const max=Number(casinoCatalog?.max_bet_cents||500);
+
+  if(!Number.isFinite(betCents)||betCents<min||betCents>max){
+    return toast(`Valor permitido: ${brl(min)} a ${brl(max)}.`);
+  }
+
+  let choice={};
+  if(casinoGame==="roulette"){
+    if(!casinoChoice)return toast("Escolha uma opção da roleta.");
+    if(casinoChoice.type==="number"){
+      const n=Number(document.getElementById("rouletteExact")?.value);
+      if(!Number.isInteger(n)||n<0||n>36)return toast("Escolha um número de 0 a 36.");
+      choice={type:"number",value:String(n)};
+    }else choice=casinoChoice;
+  }else if(casinoGame==="dice"){
+    if(!casinoChoice)return toast("Escolha 1–3 ou 4–6.");
+    choice={value:casinoChoice.value};
+  }
+
+  casinoBusy=true;
+  const button=document.getElementById("casinoPlay");
+  button.disabled=true;
+  button.textContent="JOGANDO...";
+
+  try{
+    if(casinoGame==="slots"){
+      document.querySelectorAll(".casinoReel").forEach(x=>x.classList.add("spin"));
+    }else if(casinoGame==="roulette"){
+      const wheel=document.getElementById("rouletteWheel");
+      if(wheel){
+        rouletteAngle+=720+Math.floor(Math.random()*360);
+        wheel.style.transform=`rotate(${rouletteAngle}deg)`;
+      }
+    }else if(casinoGame==="dice"){
+      const el=document.getElementById("diceFace");
+      if(el)el.textContent="🎲";
+    }
+
+    const d=await api("/api/casino/play",{
+      method:"POST",
+      body:JSON.stringify({
+        request_id:casinoRequestId(),
+        game:casinoGame,
+        bet_cents:betCents,
+        choice
+      })
+    });
+
+    balanceCents=Number(d.balance_cents||0);
+    document.getElementById("balance").textContent=brl(balanceCents);
+
+    const p=d.play;
+    const r=p.result_json||{};
+    if(casinoGame==="slots"){
+      document.querySelectorAll(".casinoReel").forEach(x=>x.classList.remove("spin"));
+      (r.reels||[]).forEach((symbol,i)=>{
+        const el=document.getElementById(`reel${i}`);
+        if(el)el.textContent=symbol;
+      });
+    }else if(casinoGame==="dice"){
+      const el=document.getElementById("diceFace");
+      if(el)el.textContent=String(r.roll||"🎲");
+    }
+
+    const won=Number(p.payout_cents||0)>0;
+    const result=document.getElementById("casinoResult");
+    result.style.display="block";
+    result.innerHTML=`
+      <strong class="${won?"casinoWin":"casinoLose"}">${won?`Retorno ${brl(p.payout_cents)}`:"Não foi dessa vez"}</strong>
+      <div class="muted" style="margin-top:4px">${casinoResultLabel(p)}</div>`;
+
+    await Promise.allSettled([loadCasino(),loadProfile()]);
+  }catch(e){
+    const code=e.data?.error||"";
+    if(code==="insufficient_balance")toast("Saldo insuficiente.");
+    else if(code==="casino_session_limit_reached")toast(`Seu limite de sessão foi atingido. Restante: ${brl(e.data?.remaining_cents||0)}.`);
+    else if(code==="invalid_casino_bet")toast("Valor de jogada inválido.");
+    else toast("Não foi possível concluir a jogada.");
+  }finally{
+    casinoBusy=false;
+    button.disabled=false;
+    button.textContent="JOGAR";
+  }
+}
+
+
+document.querySelectorAll("[data-casino-filter]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-casino-filter]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  casinoHistoryFilter=b.dataset.casinoFilter;
+  renderCasino();
+});
+
+document.getElementById("casinoSessionLimit").onchange=async(e)=>{
+  try{
+    await api("/api/casino/preferences",{
+      method:"PUT",
+      body:JSON.stringify({session_limit_cents:Number(e.target.value)})
+    });
+    await loadCasino();
+    toast("Limite de sessão atualizado.");
+  }catch(err){
+    toast("Não foi possível atualizar o limite.");
+  }
+};
+
+document.getElementById("casinoPlay").onclick=playCasino;
+document.getElementById("closeCasino").onclick=()=>document.getElementById("casinoModal").classList.remove("open");
+
+async function loadProfile(){
+  if(!initData)return;
+  try{
+    const d=await api("/api/profile-summary");
+    profileData=d;
+    const u=d.user||{},s=d.stats||{};
+    document.getElementById("profileName").textContent=u.first_name||"Usuário";
+    document.getElementById("profileUsername").textContent=u.username?`@${u.username}`:"";
+    document.getElementById("profileAvatar").textContent=(u.first_name||"B").slice(0,1).toUpperCase();
+    document.getElementById("statTotalBets").textContent=s.total_bets||0;
+    document.getElementById("statHitRate").textContent=`${Number(s.hit_rate_percent||0).toFixed(1)}%`;
+    document.getElementById("statWon").textContent=s.won_bets||0;
+    document.getElementById("statEarly").textContent=s.early_payout_legs||0;
+    document.getElementById("statCasinoPlays").textContent=s.casino_plays||0;
+    document.getElementById("statCasinoPayout").textContent=brl(s.casino_payout_cents||0);
+    document.getElementById("statStake").textContent=brl(s.total_stake_cents||0);
+    document.getElementById("statWonValue").textContent=brl(s.total_won_cents||0);
+    document.getElementById("profileBalance").textContent=brl(u.balance_cents||0);
+    document.getElementById("profileBiggestOdd").textContent=Number(s.biggest_winning_odd||0)>0?Number(s.biggest_winning_odd).toFixed(2):"—";
+    document.getElementById("profileSince").textContent=u.created_at?new Date(u.created_at).toLocaleDateString("pt-BR"):"—";
+  }catch(e){}
+}
+
+function renderHistoryFromState(){
+  const slips=userSlips||[];
+  document.getElementById("histPending").textContent=slips.filter(x=>x.status==="pending").length;
+  document.getElementById("histWon").textContent=slips.filter(x=>x.status==="won").length;
+  document.getElementById("histLost").textContent=slips.filter(x=>x.status==="lost").length;
+  const filtered=historyFilter==="all"?slips:slips.filter(x=>x.status===historyFilter);
+  document.getElementById("slipsHistory").innerHTML=filtered.length?filtered.map(x=>`
+    <div class="item">
+      <b>Bilhete #${x.id} • ${x.legs.length} seleções</b><br>
+      <small>Entrada: ${brl(x.stake_cents)} • Odd: ${Number(x.combined_odd).toFixed(2)} • Potencial: ${brl(x.potential_cents)}</small><br>
+      <small>Status: ${statusLabel(x.status)}</small>
+      ${(x.legs||[]).map(l=>`<div class="legHist"><small><b>${l.home_team} × ${l.away_team}</b><br>${l.market_label}: ${(()=>{const t=ptSelection(l.selection_name,l.selection_description);return `${t.name}${t.description?` • ${t.description}`:""}${l.selection_point!==null?` • ${l.selection_point}`:""}`})()} @ ${Number(l.odd).toFixed(2)} • ${statusLabel(l.status)}${l.early_payout_triggered?`<br><span class="paidEarly">⚡ PAGAMENTO ANTECIPADO • 2 GOLS • ${l.early_payout_home_score}×${l.early_payout_away_score}</span>`:""}</small></div>`).join("")}
+    </div>`).join(""):`<div class="muted">Nenhum bilhete nesta categoria.</div>`;
+}
+
+document.querySelectorAll("[data-history-filter]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-history-filter]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active"); historyFilter=b.dataset.historyFilter; renderHistoryFromState();
+});
+
+async function loadHistory(){
+  if(!initData)return;
+  try{
+    const [s,b]=await Promise.all([api("/api/slips"),api("/api/bets")]);
+    userSlips=s.slips||[];
+    renderActiveSlipsHome();
+    renderHistoryFromState();
+    document.getElementById("legacyHistory").innerHTML=b.bets.length?b.bets.map(x=>`<div class="item"><b>${x.game}</b><br><small>${x.pick} @ ${Number(x.odd).toFixed(2)} • ${brl(x.stake_cents)} • ${statusLabel(x.status)}</small></div>`).join(""):`<div class="muted">Nenhuma aposta antiga.</div>`;
+  }catch(e){}
+}
+
+document.querySelectorAll("[data-home-mode]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-home-mode]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  homeMode=b.dataset.homeMode;
+  renderGames();
+  renderLiveBoard();
+  loadLiveScores();
+});
+
+document.getElementById("teamSearch").addEventListener("input",e=>{
+  teamSearch=e.target.value||"";
+  renderGames();
+  renderLiveBoard();
+});
+
+document.getElementById("openRules").onclick=()=>document.getElementById("rulesModal").classList.add("open");
+document.getElementById("closeRules").onclick=()=>document.getElementById("rulesModal").classList.remove("open");
+
+document.querySelectorAll(".sport-tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".sport-tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentCategory=b.dataset.category;currentSportKey=sports[currentCategory][0].key;liveScores={};renderLeagueOptions();loadGames()});
+document.getElementById("leagueSelect").onchange=e=>{currentSportKey=e.target.value;liveScores={};updateFavLeagueButton();loadGames()};
+document.getElementById("favLeagueBtn").onclick=toggleFavoriteLeague;
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  const tab=b.dataset.tab;
+  document.getElementById("gamesView").style.display=tab==="games"?"block":"none";
+  document.getElementById("casinoView").style.display=tab==="casino"?"block":"none";
+  document.getElementById("historyView").style.display=tab==="history"?"block":"none";
+  document.getElementById("referralView").style.display=tab==="referral"?"block":"none";
+  document.getElementById("profileView").style.display=tab==="profile"?"block":"none";
+
+  const slipbar=document.querySelector(".slipbar");
+  if(slipbar)slipbar.style.display=tab==="casino"?"none":"block";
+
+  if(tab==="history"){
+    loadMe(); loadHistory();
+  }else if(tab==="casino"){
+    loadMe(); loadCasino();
+  }else if(tab==="referral"){
+    loadMe(); loadReferral();
+  }else if(tab==="profile"){
+    loadMe(); loadProfile();
+  }else{
+    loadLiveScores();
+  }
+});
+
+async function init(){
+  restoreSlip();
+  refreshSlipBar();
+  renderLeagueOptions();
+
+  await registerReferralFromStartParam().catch(()=>null);
+  await Promise.allSettled([loadMe(),loadAppConfig(),loadPreferences()]);
+  renderLeagueOptions();
+
+  await loadServerDraft().catch(()=>null);
+  refreshSlipBar();
+
+  await importSharedSlipIfPresent().catch(()=>null);
+  refreshSlipBar();
+
+  await Promise.allSettled([loadGames(),loadHistory(),loadReferral(),loadProfile(),loadCasino()]);
+  refreshSlipBar();
+  renderSlipModal();
+
+  // Retry once after Render/connection wake-up.
+  setTimeout(async()=>{
+    if(!games.length){
+      await Promise.allSettled([loadMe(),loadGames(),loadHistory()]);
+    }
+  },3500);
+}
+init();
+
+window.addEventListener("pagehide",persistSlip);
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="hidden"){
+    persistSlip();
+  }else{
+    loadMe();
+    loadLiveScores();
+    loadHistory();
+    loadReferral();
+    loadProfile();
+  }
+});
+</script>
+</body>
+</html>
