@@ -1601,10 +1601,16 @@ async function playCasino(){
 
 let arcadeGame=null,arcadeRound=null,arcadeRunning=false,arcadeFinishing=false,arcadeRAF=0,arcadeTimer=0,arcadeEngine=null;
 let arcadeMode="cpu",arenaMatch=null,arenaPollTimer=0;
+const arcadeTimeouts=new Set();
+function arcadeLater(fn,ms){
+  const id=setTimeout(()=>{arcadeTimeouts.delete(id);if(arcadeRunning)fn()},ms);
+  arcadeTimeouts.add(id);return id;
+}
+function clearArcadeTimeouts(){for(const id of arcadeTimeouts)clearTimeout(id);arcadeTimeouts.clear()}
 const AC=()=>document.getElementById("arcadeCanvas"), AX=()=>AC().getContext("2d");
 function setArcadeBet(v){document.getElementById("arcadeBet").value=Number(v).toFixed(2)} window.setArcadeBet=setArcadeBet;
 function arcadeHud(score,time,meta){document.getElementById("arcadeScore").textContent=score;document.getElementById("arcadeTime").textContent=time;document.getElementById("arcadeMeta").textContent=meta}
-function arcadeStop(){arcadeRunning=false;cancelAnimationFrame(arcadeRAF);clearInterval(arcadeTimer);clearInterval(arenaPollTimer);arcadeRAF=0;arcadeTimer=0;arenaPollTimer=0;if(arcadeEngine?.cleanup)try{arcadeEngine.cleanup()}catch(e){}arcadeEngine=null}
+function arcadeStop(){arcadeRunning=false;cancelAnimationFrame(arcadeRAF);clearInterval(arcadeTimer);clearInterval(arenaPollTimer);clearArcadeTimeouts();arcadeRAF=0;arcadeTimer=0;arenaPollTimer=0;if(arcadeEngine?.cleanup)try{arcadeEngine.cleanup()}catch(e){}arcadeEngine=null}
 function canvasPoint(ev){const r=AC().getBoundingClientRect(),t=ev.touches?.[0]||ev.changedTouches?.[0]||ev;return{x:(t.clientX-r.left)*AC().width/r.width,y:(t.clientY-r.top)*AC().height/r.height}}
 function setArenaMode(mode){arcadeMode=mode;document.querySelectorAll('[data-arena-mode]').forEach(b=>b.classList.toggle('active',b.dataset.arenaMode===mode));document.getElementById('arenaPvpPanel').classList.toggle('show',mode==='pvp');document.getElementById('arcadeStart').textContent=mode==='solo'?'INICIAR SOLO':mode==='cpu'?'JOGAR CONTRA CPU':'CRIAR SALA PVP'}
 function openArcadeGame(game){
@@ -1639,7 +1645,7 @@ async function finishArcade(score,metrics={}){
 }
 function showArenaResult(d){clearInterval(arenaPollTimer);arenaPollTimer=0;updateArenaBalance(d.balance_cents);document.getElementById('arenaWaiting').style.display='none';document.getElementById('arcadeLive').style.display='none';document.getElementById('arcadeFinish').style.display='block';const me=d.player||{};let result='EMPATE',detail='';if(d.match.mode==='cpu'){const my=Number(me.score||0),cpu=Number(d.match.cpu_score||0);result=Number(me.compare_points)>Number((d.match.game==='plinko'?(d.match.challenge_json?.multipliers?.[cpu]||0)*100:cpu))?'VITÓRIA':Number(me.compare_points)===Number((d.match.game==='plinko'?(d.match.challenge_json?.multipliers?.[cpu]||0)*100:cpu))?'EMPATE':'DERROTA';detail=`Você ${my} × CPU ${cpu}`;}else{const other=(d.players||[]).find(p=>String(p.telegram_id)!==String(tgUser?.id));const my=Number(me.score||0),op=Number(other?.score||0);result=Number(me.compare_points)>Number(other?.compare_points)?'VITÓRIA':Number(me.compare_points)===Number(other?.compare_points)?'EMPATE':'DERROTA';detail=`Você ${my} × ${other?.first_name||'Adversário'} ${op}`;}document.getElementById('arcadeFinishIcon').textContent=result==='VITÓRIA'?'🏆':result==='EMPATE'?'🤝':'⚔️';document.getElementById('arcadeFinishTitle').textContent=result;document.getElementById('arcadeFinishScore').textContent=detail;document.getElementById('arcadeFinishPayout').textContent=Number(me.payout_cents||0)>0?`Retorno ${brl(me.payout_cents)}`:'Sem prêmio';document.getElementById('arenaCancelBtn').style.display='block'}
 
-function setupCountdown(ms,onEnd){const deadline=Date.now()+Number(ms||30000);const tick=()=>{const left=Math.max(0,deadline-Date.now());document.getElementById("arcadeTime").textContent=`${Math.ceil(left/1000)}s`;if(left<=0)onEnd()};tick();arcadeTimer=setInterval(tick,200);return deadline}
+function setupCountdown(ms,onEnd){clearInterval(arcadeTimer);arcadeTimer=0;const deadline=Date.now()+Number(ms||30000);let ended=false;const tick=()=>{const left=Math.max(0,deadline-Date.now());document.getElementById("arcadeTime").textContent=`${Math.ceil(left/1000)}s`;if(left<=0&&!ended){ended=true;clearInterval(arcadeTimer);arcadeTimer=0;onEnd()}};tick();arcadeTimer=setInterval(tick,200);return deadline}
 function launchArcadeEngine(game,ch){if(game==="pool")return gamePool(ch);if(game==="pong")return gamePong(ch);if(game==="airhockey")return gameAirHockey(ch);if(game==="penalty")return gamePenalty(ch);if(game==="darts")return gameDarts(ch);if(game==="basket")return gameBasket(ch);if(game==="memory")return gameMemory(ch);if(game==="brickblast")return gameBrick(ch);if(game==="lanerush")return gameLane(ch);if(game==="pinball")return gamePinball(ch);if(game==="bubbledrop")return gameBubble(ch);if(game==="plinko")return gamePlinko(ch);if(game==="bowling")return gameBowling(ch);if(game==="golf")return gameGolf(ch);if(game==="archery")return gameArchery(ch);if(game==="goalkeeper")return gameGoalkeeper(ch);if(game==="skeeball")return gameSkeeBall(ch);if(game==="disctarget")return gameDiscTarget(ch)}
 
 
@@ -1659,18 +1665,18 @@ function gameAirHockey(ch){
 function gamePenalty(ch){
  const c=AC(),x=AX(),W=c.width,H=c.height;let score=0,shot=0,busy=false;const total=Number(ch.shots||10);setupCountdown(ch.duration_ms||40000,()=>finishArcade(score,{shots:shot}));arcadeHud(0,'40s',`${total} chutes`);document.getElementById('arcadeHint').textContent='Toque em um dos 5 setores do gol.';const zones=[{x:70,y:155},{x:180,y:145},{x:290,y:155},{x:115,y:260},{x:245,y:260}];let keeper=2,lastShot=null;
  function draw(){x.fillStyle='#123a22';x.fillRect(0,0,W,H);x.fillStyle='#1f5682';x.fillRect(25,75,W-50,250);x.strokeStyle='#fff';x.lineWidth=5;x.strokeRect(40,95,W-80,210);for(let i=0;i<5;i++){x.beginPath();x.arc(zones[i].x,zones[i].y,34,0,Math.PI*2);x.fillStyle='#ffffff13';x.fill();x.strokeStyle='#ffffff22';x.stroke();x.fillStyle='#fff';x.font='bold 18px system-ui';x.textAlign='center';x.fillText(String(i+1),zones[i].x,zones[i].y+6)}x.fillStyle='#ffdf4e';x.fillRect(zones[keeper].x-24,zones[keeper].y-10,48,20);if(lastShot!=null){x.beginPath();x.arc(zones[lastShot].x,zones[lastShot].y,12,0,Math.PI*2);x.fillStyle='#fff';x.fill()}}
- c.onpointerdown=e=>{if(busy||shot>=total)return;const p=canvasPoint(e);let best=0,bd=1e9;zones.forEach((z,i)=>{const d=Math.hypot(z.x-p.x,z.y-p.y);if(d<bd){bd=d;best=i}});busy=true;keeper=Math.floor(Math.random()*5);lastShot=best;shot++;if(best!==keeper){score++;document.getElementById('arcadeScore').textContent=score}document.getElementById('arcadeMeta').textContent=`${Math.max(0,total-shot)} chutes`;draw();setTimeout(()=>{busy=false;lastShot=null;if(shot>=total)finishArcade(score,{shots:shot});else draw()},550)};draw();arcadeEngine={cleanup:()=>{c.onpointerdown=null;document.getElementById('arcadeHint').textContent=''}}
+ c.onpointerdown=e=>{if(busy||shot>=total)return;const p=canvasPoint(e);let best=0,bd=1e9;zones.forEach((z,i)=>{const d=Math.hypot(z.x-p.x,z.y-p.y);if(d<bd){bd=d;best=i}});busy=true;keeper=Math.floor(Math.random()*5);lastShot=best;shot++;if(best!==keeper){score++;document.getElementById('arcadeScore').textContent=score}document.getElementById('arcadeMeta').textContent=`${Math.max(0,total-shot)} chutes`;draw();arcadeLater(()=>{busy=false;lastShot=null;if(shot>=total)finishArcade(score,{shots:shot});else draw()},550)};draw();arcadeEngine={cleanup:()=>{c.onpointerdown=null;document.getElementById('arcadeHint').textContent=''}}
 }
 
 function gameDarts(ch){
  const c=AC(),x=AX(),W=c.width,H=c.height;let total=0,throws=0,last=0,ang=0,radius=135;const maxThrows=Number(ch.darts||12);setupCountdown(ch.duration_ms||45000,()=>finishArcade(total,{throws}));arcadeHud(0,'45s',`${maxThrows} dardos`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="dartThrow">LANÇAR DARDO</button>';document.getElementById('arcadeHint').textContent='A mira se move. Lance quando estiver perto do centro.';
- document.getElementById('dartThrow').onclick=()=>{if(throws>=maxThrows)return;const px=W/2+Math.cos(ang)*radius*.8,py=235+Math.sin(ang*1.7)*radius*.65,d=Math.hypot(px-W/2,py-235);const pts=d<18?50:d<42?35:d<75?20:d<110?10:5;total+=pts;throws++;document.getElementById('arcadeScore').textContent=total;document.getElementById('arcadeMeta').textContent=`${maxThrows-throws} dardos`;if(throws>=maxThrows)setTimeout(()=>finishArcade(total,{throws}),250)};
+ document.getElementById('dartThrow').onclick=()=>{if(throws>=maxThrows)return;const px=W/2+Math.cos(ang)*radius*.8,py=235+Math.sin(ang*1.7)*radius*.65,d=Math.hypot(px-W/2,py-235);const pts=d<18?50:d<42?35:d<75?20:d<110?10:5;total+=pts;throws++;document.getElementById('arcadeScore').textContent=total;document.getElementById('arcadeMeta').textContent=`${maxThrows-throws} dardos`;if(throws>=maxThrows)arcadeLater(()=>finishArcade(total,{throws}),250)};
  function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;ang+=.045*dt;radius=105+Math.sin(ang*.72)*45;x.fillStyle='#101319';x.fillRect(0,0,W,H);const cx=W/2,cy=235;for(const rr of [145,118,90,60,30]){x.beginPath();x.arc(cx,cy,rr,0,Math.PI*2);x.fillStyle=rr===30?'#e43d4c':rr===60?'#f0e8d0':rr===90?'#1a2028':rr===118?'#f0e8d0':'#193728';x.fill()}x.beginPath();x.arc(cx,cy,12,0,Math.PI*2);x.fillStyle='#ffcf32';x.fill();const px=cx+Math.cos(ang)*radius*.8,py=cy+Math.sin(ang*1.7)*radius*.65;x.strokeStyle='#8fff47';x.lineWidth=2;x.beginPath();x.moveTo(px-14,py);x.lineTo(px+14,py);x.moveTo(px,py-14);x.lineTo(px,py+14);x.stroke();arcadeRAF=requestAnimationFrame(loop)}arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gameBasket(ch){
  const c=AC(),x=AX(),W=c.width,H=c.height;
- let score=0,shots=0,last=0,phase=0,hoopX=W/2,shotAnim=null,busy=false;
+ let score=0,shots=0,last=0,phase=0,hoopX=W/2,shotAnim=null,busy=false,netKick=0;
  const maxShots=Number(ch.shots||15);
  setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{shots}));
  arcadeHud(0,'45s',`${maxShots} arremessos`);
@@ -1680,16 +1686,16 @@ function gameBasket(ch){
 
  function startShot(){
    if(busy||shots>=maxShots)return;
-   busy=true;shootBtn.disabled=true;shots++;
+   busy=true;shootBtn.disabled=true;shootBtn.style.opacity='.55';shots++;
    const hoopAtShot=hoopX;
    const diff=Math.abs(hoopAtShot-W/2);
    const pts=diff<20?3:diff<48?2:0;
    const missDir=(hoopAtShot>=W/2?-1:1);
    shotAnim={
-     start:performance.now(),duration:760,
-     sx:W/2,sy:H-85,
-     ex:pts>0?hoopAtShot:W/2+missDir*(55+Math.min(55,diff*.35)),
-     ey:pts>0?202:235,
+     p:0,duration:1250,
+     sx:W/2,sy:H-82,
+     ex:pts>0?hoopAtShot:hoopAtShot+missDir*(62+Math.min(45,diff*.3)),
+     ey:pts>0?238:225,
      hoopX:hoopAtShot,pts
    };
    document.getElementById('arcadeMeta').textContent=`${Math.max(0,maxShots-shots)} arremessos`;
@@ -1702,18 +1708,23 @@ function gameBasket(ch){
    score+=a.pts;
    document.getElementById('arcadeScore').textContent=score;
    document.getElementById('arcadeHint').textContent=a.pts>0?`Cesta! +${a.pts} ponto${a.pts>1?'s':''}`:'Errou. Tente alinhar melhor com a cesta.';
-   shotAnim=null;busy=false;shootBtn.disabled=false;
-   if(shots>=maxShots)setTimeout(()=>finishArcade(score,{shots}),380);
+   if(a.pts>0)netKick=1;
+   shotAnim=null;busy=false;shootBtn.disabled=false;shootBtn.style.opacity='';
+   if(shots>=maxShots)arcadeLater(()=>finishArcade(score,{shots}),450);
  }
 
  function drawHoop(hx){
-   x.fillStyle='#3b4758';x.fillRect(hx+45,90,8,105);
+   x.fillStyle='#3b4758';x.fillRect(hx+45,88,8,108);
+   x.fillStyle='#2a3140';x.fillRect(hx-42,80,95,8);
    x.strokeStyle='#ff762d';x.lineWidth=6;x.beginPath();x.ellipse(hx,190,46,13,0,0,Math.PI*2);x.stroke();
-   x.strokeStyle='#ffffff55';x.lineWidth=1;
-   for(let i=-35;i<=35;i+=14){x.beginPath();x.moveTo(hx+i,196);x.lineTo(hx+i*.5,252);x.stroke()}
+   x.strokeStyle='#ffffff66';x.lineWidth=1.2;
+   const kick=netKick*7;
+   for(let i=-35;i<=35;i+=14){
+     x.beginPath();x.moveTo(hx+i,196);x.lineTo(hx+i*.50+(i<0?-kick:kick),252+kick*.25);x.stroke()
+   }
  }
- function drawBall(bx,by,r=28,alpha=1){
-   x.save();x.globalAlpha=alpha;x.translate(bx,by);
+ function drawBall(bx,by,r=28,alpha=1,rot=0){
+   x.save();x.globalAlpha=alpha;x.translate(bx,by);x.rotate(rot);
    x.beginPath();x.arc(0,0,r,0,Math.PI*2);x.fillStyle='#ef7d24';x.fill();x.strokeStyle='#35170a';x.lineWidth=Math.max(1.5,r*.1);x.stroke();
    x.strokeStyle='#35170acc';x.lineWidth=Math.max(1,r*.07);
    x.beginPath();x.arc(0,0,r*.72,-1.1,1.1);x.stroke();
@@ -1721,56 +1732,102 @@ function gameBasket(ch){
    x.beginPath();x.moveTo(-r,0);x.quadraticCurveTo(0,r*.34,r,0);x.stroke();
    x.restore();
  }
+ function shotPoint(a,p){
+   // Quadratic arc controlled entirely by frame progress (stable in Telegram WebView).
+   const cpX=(a.sx+a.ex)/2;
+   const cpY=72;
+   const q=1-p;
+   return {
+     x:q*q*a.sx+2*q*p*cpX+p*p*a.ex,
+     y:q*q*a.sy+2*q*p*cpY+p*p*a.ey
+   };
+ }
 
  function loop(t){
    if(!arcadeRunning)return;
-   const dt=Math.min(2,(t-last||16)/16);last=t;
-   if(!busy){phase+=.035*dt;hoopX=W/2+Math.sin(phase)*120;}
+   const dtMs=Math.min(50,t-last||16);last=t;
+   if(netKick>0)netKick=Math.max(0,netKick-dtMs/420);
+   if(!busy){phase+=.00225*dtMs;hoopX=W/2+Math.sin(phase)*120;}
    else if(shotAnim){hoopX=shotAnim.hoopX;}
 
    x.fillStyle='#16121a';x.fillRect(0,0,W,H);
-   // backboard / court accents
    x.fillStyle='#242132';x.fillRect(0,H-42,W,42);
    x.strokeStyle='#ffffff13';x.lineWidth=2;x.beginPath();x.arc(W/2,H-50,88,Math.PI,Math.PI*2);x.stroke();
    drawHoop(hoopX);
 
    if(shotAnim){
-     const raw=Math.min(1,(t-shotAnim.start)/shotAnim.duration);
-     const ease=raw<.5?2*raw*raw:1-Math.pow(-2*raw+2,2)/2;
-     const bx=shotAnim.sx+(shotAnim.ex-shotAnim.sx)*ease;
-     const baseY=shotAnim.sy+(shotAnim.ey-shotAnim.sy)*ease;
-     const arc=-185*4*ease*(1-ease);
-     const by=baseY+arc;
-     const r=28-(raw*5);
-     drawBall(bx,by,r,1);
-     // shadow grows/shrinks with flight
-     x.save();x.globalAlpha=.20+.18*raw;x.beginPath();x.ellipse(bx,H-56,26*(1-raw*.35),7*(1-raw*.25),0,0,Math.PI*2);x.fillStyle='#000';x.fill();x.restore();
-     if(raw>=1)finishShot(shotAnim);
+     shotAnim.p=Math.min(1,shotAnim.p+dtMs/shotAnim.duration);
+     const p=shotAnim.p;
+     // Visible trail so movement is unmistakable on 60/90/120Hz Android displays.
+     for(let k=4;k>=1;k--){
+       const pp=Math.max(0,p-k*.045),pt=shotPoint(shotAnim,pp);
+       drawBall(pt.x,pt.y,23,0.07+(5-k)*.035,pp*7);
+     }
+     const pt=shotPoint(shotAnim,p);
+     const r=28-p*5;
+     drawBall(pt.x,pt.y,r,1,p*8);
+     x.save();x.globalAlpha=.20+.16*p;x.beginPath();x.ellipse(pt.x,H-55,25*(1-p*.4),7*(1-p*.25),0,0,Math.PI*2);x.fillStyle='#000';x.fill();x.restore();
+     if(p>=1)finishShot(shotAnim);
    }else{
-     drawBall(W/2,H-85,28,1);
-     x.setLineDash([5,5]);x.strokeStyle='#8fff47aa';x.lineWidth=2;x.beginPath();x.moveTo(W/2,H-115);x.lineTo(hoopX,205);x.stroke();x.setLineDash([]);
+     drawBall(W/2,H-82,28,1,0);
+     x.setLineDash([6,6]);x.strokeStyle='#8fff47b8';x.lineWidth=2;x.beginPath();x.moveTo(W/2,H-113);x.quadraticCurveTo(W/2,110,hoopX,205);x.stroke();x.setLineDash([]);
    }
    arcadeRAF=requestAnimationFrame(loop)
  }
- arcadeEngine={cleanup:()=>{shootBtn.onclick=null;document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};
+ arcadeEngine={cleanup:()=>{shootBtn.onclick=null;shootBtn.style.opacity='';document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};
  arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gameMemory(ch){
- const c=AC(),x=AX(),W=c.width,H=c.height;const icons=['⚽','🎱','🏀','🎯','🏎️','🎮','⭐','💎'];let cards=[...icons,...icons].sort(()=>Math.random()-.5).map((v,i)=>({v,i,open:false,done:false}));let first=null,busy=false,score=0;setupCountdown(ch.duration_ms||60000,()=>finishArcade(score,{pairs:score}));arcadeHud(0,'60s','8 pares');document.getElementById('arcadeHint').textContent='Toque em duas cartas para encontrar os pares.';const cols=4,rows=4,gap=9,cw=(W-gap*(cols+1))/cols,chh=92;
+ const c=AC(),x=AX(),W=c.width,H=c.height;const icons=['⚽','🎱','🏀','🎯','🏎️','🎮','⭐','💎'];
+ let cards=[...icons,...icons].sort(()=>Math.random()-.5).map((v,i)=>({v,i,open:false,done:false})),first=null,busy=false,score=0;
+ setupCountdown(ch.duration_ms||60000,()=>finishArcade(score,{pairs:score}));arcadeHud(0,'60s','8 pares');
+ document.getElementById('arcadeHint').textContent='Toque em duas cartas para encontrar os pares.';
+ const cols=4,rows=4,gap=9,cw=(W-gap*(cols+1))/cols,chh=92;
  function draw(){x.fillStyle='#101729';x.fillRect(0,0,W,H);cards.forEach((c0,i)=>{const col=i%cols,row=Math.floor(i/cols),xx=gap+col*(cw+gap),yy=55+row*(chh+gap);x.fillStyle=c0.done?'#1d6b47':c0.open?'#243a62':'#1a2230';x.fillRect(xx,yy,cw,chh);x.strokeStyle=c0.done?'#8fff47':'#37465c';x.strokeRect(xx,yy,cw,chh);x.fillStyle='#fff';x.font='32px system-ui';x.textAlign='center';x.fillText((c0.open||c0.done)?c0.v:'?',xx+cw/2,yy+56)})}
- c.onpointerdown=e=>{if(busy)return;const p=canvasPoint(e),col=Math.floor((p.x-gap)/(cw+gap)),row=Math.floor((p.y-55)/(chh+gap));if(col<0||col>=cols||row<0||row>=rows)return;const i=row*cols+col,card=cards[i];if(!card||card.open||card.done)return;card.open=true;draw();if(first==null){first=i}else{busy=true;const a=cards[first],b=card;if(a.v===b.v){a.done=b.done=true;score++;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${8-score} pares`;first=null;busy=false;if(score>=8)setTimeout(()=>finishArcade(score,{pairs:score}),300)}else setTimeout(()=>{a.open=b.open=false;first=null;busy=false;draw()},650)}};draw();arcadeEngine={cleanup:()=>{c.onpointerdown=null;document.getElementById('arcadeHint').textContent=''}}
+ c.onpointerdown=e=>{
+   if(busy||!arcadeRunning)return;const p=canvasPoint(e),gx=p.x-gap,gy=p.y-55;if(gx<0||gy<0)return;
+   const col=Math.floor(gx/(cw+gap)),row=Math.floor(gy/(chh+gap));if(col<0||col>=cols||row<0||row>=rows)return;
+   const localX=gx-col*(cw+gap),localY=gy-row*(chh+gap);if(localX>cw||localY>chh)return; // ignore gaps
+   const i=row*cols+col,card=cards[i];if(!card||card.open||card.done)return;card.open=true;draw();
+   if(first==null){first=i;return}
+   busy=true;const a=cards[first],b=card;
+   if(a.v===b.v){
+     a.done=b.done=true;score++;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${8-score} pares`;first=null;busy=false;
+     if(score>=8)arcadeLater(()=>finishArcade(score,{pairs:score}),320)
+   }else arcadeLater(()=>{a.open=b.open=false;first=null;busy=false;draw()},650)
+ };
+ draw();arcadeEngine={cleanup:()=>{c.onpointerdown=null;document.getElementById('arcadeHint').textContent=''}}
 }
 
 function gameBrick(ch){
-  const c=AC(),x=AX(),W=c.width,H=c.height;let score=0,lives=3,paddle={x:140,y:H-35,w:80,h:12},ball={x:180,y:H-65,vx:3.1,vy:-4.2,r:7};const bricks=[];for(let r=0;r<5;r++)for(let col=0;col<5;col++)bricks.push({x:16+col*68,y:45+r*28,w:60,h:20,on:true});const deadline=setupCountdown(ch.duration_ms,()=>finishArcade(score,{lives}));arcadeHud(0,"30s",`${lives} vidas`);
-  const move=e=>{e.preventDefault();const p=canvasPoint(e);paddle.x=Math.max(0,Math.min(W-paddle.w,p.x-paddle.w/2))};c.onpointermove=move;c.onpointerdown=move;
-  function resetBall(){ball={x:paddle.x+paddle.w/2,y:H-65,vx:(Math.random()>.5?1:-1)*3.1,vy:-4.2,r:7}}
-  function loop(){if(!arcadeRunning)return;ball.x+=ball.vx;ball.y+=ball.vy;if(ball.x<ball.r||ball.x>W-ball.r)ball.vx*=-1;if(ball.y<ball.r)ball.vy=Math.abs(ball.vy);if(ball.y+ball.r>=paddle.y&&ball.y-ball.r<=paddle.y+paddle.h&&ball.x>=paddle.x&&ball.x<=paddle.x+paddle.w&&ball.vy>0){ball.vy=-Math.abs(ball.vy);ball.vx+=(ball.x-(paddle.x+paddle.w/2))*.04}
-    for(const b of bricks){if(!b.on)continue;if(ball.x+ball.r>b.x&&ball.x-ball.r<b.x+b.w&&ball.y+ball.r>b.y&&ball.y-ball.r<b.y+b.h){b.on=false;ball.vy*=-1;score++;document.getElementById("arcadeScore").textContent=score;if(score>=25)return finishArcade(score,{lives})}}
-    if(ball.y>H+20){lives--;document.getElementById("arcadeMeta").textContent=`${lives} vidas`;if(lives<=0)return finishArcade(score,{lives:0});resetBall()}
-    x.fillStyle="#07131b";x.fillRect(0,0,W,H);bricks.forEach((b,i)=>{if(b.on){x.fillStyle=`hsl(${(i*18)%360} 80% 55%)`;x.fillRect(b.x,b.y,b.w,b.h)}});x.fillStyle="#8fff47";x.fillRect(paddle.x,paddle.y,paddle.w,paddle.h);x.beginPath();x.arc(ball.x,ball.y,ball.r,0,Math.PI*2);x.fillStyle="#fff";x.fill();arcadeRAF=requestAnimationFrame(loop)}
-  arcadeEngine={cleanup:()=>{c.onpointermove=c.onpointerdown=null}};loop();
+ const c=AC(),x=AX(),W=c.width,H=c.height;let score=0,lives=3,paddle={x:140,y:H-35,w:80,h:12},ball={x:180,y:H-65,vx:3.1,vy:-4.2,r:7};
+ const bricks=[];for(let r=0;r<5;r++)for(let col=0;col<5;col++)bricks.push({x:16+col*68,y:45+r*28,w:60,h:20,on:true});
+ setupCountdown(ch.duration_ms,()=>finishArcade(score,{lives}));arcadeHud(0,"30s",`${lives} vidas`);
+ const move=e=>{e.preventDefault();const p=canvasPoint(e);paddle.x=Math.max(0,Math.min(W-paddle.w,p.x-paddle.w/2))};c.onpointermove=move;c.onpointerdown=move;
+ function resetBall(){ball={x:paddle.x+paddle.w/2,y:H-65,vx:(Math.random()>.5?1:-1)*3.1,vy:-4.2,r:7}}
+ function loop(){if(!arcadeRunning)return;
+   ball.x+=ball.vx;ball.y+=ball.vy;
+   if(ball.x<ball.r){ball.x=ball.r;ball.vx=Math.abs(ball.vx)}
+   if(ball.x>W-ball.r){ball.x=W-ball.r;ball.vx=-Math.abs(ball.vx)}
+   if(ball.y<ball.r){ball.y=ball.r;ball.vy=Math.abs(ball.vy)}
+   if(ball.vy>0&&ball.y+ball.r>=paddle.y&&ball.y-ball.r<=paddle.y+paddle.h&&ball.x>=paddle.x&&ball.x<=paddle.x+paddle.w){
+     ball.y=paddle.y-ball.r-1;ball.vy=-Math.abs(ball.vy);ball.vx+=(ball.x-(paddle.x+paddle.w/2))*.04
+   }
+   for(const b of bricks){
+     if(!b.on)continue;
+     if(ball.x+ball.r>b.x&&ball.x-ball.r<b.x+b.w&&ball.y+ball.r>b.y&&ball.y-ball.r<b.y+b.h){
+       b.on=false;score++;document.getElementById("arcadeScore").textContent=score;
+       const cx=b.x+b.w/2,cy=b.y+b.h/2,dx=(ball.x-cx)/(b.w/2),dy=(ball.y-cy)/(b.h/2);
+       if(Math.abs(dx)>Math.abs(dy))ball.vx*=-1;else ball.vy*=-1;
+       if(score>=25)return finishArcade(score,{lives});
+       break; // never destroy two bricks from one physics step
+     }
+   }
+   if(ball.y>H+20){lives--;document.getElementById("arcadeMeta").textContent=`${lives} vidas`;if(lives<=0)return finishArcade(score,{lives:0});resetBall()}
+   x.fillStyle="#07131b";x.fillRect(0,0,W,H);bricks.forEach((b,i)=>{if(b.on){x.fillStyle=`hsl(${(i*18)%360} 80% 55%)`;x.fillRect(b.x,b.y,b.w,b.h)}});x.fillStyle="#8fff47";x.fillRect(paddle.x,paddle.y,paddle.w,paddle.h);x.beginPath();x.arc(ball.x,ball.y,ball.r,0,Math.PI*2);x.fillStyle="#fff";x.fill();arcadeRAF=requestAnimationFrame(loop)
+ }
+ arcadeEngine={cleanup:()=>{c.onpointermove=c.onpointerdown=null}};arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gameLane(ch){
@@ -1779,12 +1836,25 @@ function gameLane(ch){
 }
 
 function gamePinball(ch){
- const c=AC(),x=AX(),W=c.width,H=c.height;let score=0,lives=3,left=false,right=false,last=0;let ball={x:180,y:95,vx:2.2,vy:0,r:8};const bumps=[{x:105,y:180,r:28},{x:255,y:180,r:28},{x:180,y:285,r:30}];setupCountdown(ch.duration_ms,()=>finishArcade(score,{lives}));arcadeHud(0,"30s",`${lives} bolas`);document.getElementById("arcadeControls").innerHTML='<button id="flipL">◀ FLIPPER</button><button id="flipR">FLIPPER ▶</button>';const bind=(id,set)=>{const el=document.getElementById(id);el.onpointerdown=e=>{e.preventDefault();set(true)};el.onpointerup=el.onpointercancel=()=>set(false)};bind("flipL",v=>left=v);bind("flipR",v=>right=v);
+ const c=AC(),x=AX(),W=c.width,H=c.height;let score=0,lives=3,left=false,right=false,last=0,flipCooldown=0;let ball={x:180,y:95,vx:2.2,vy:0,r:8};
+ const bumps=[{x:105,y:180,r:28},{x:255,y:180,r:28},{x:180,y:285,r:30}];
+ setupCountdown(ch.duration_ms,()=>finishArcade(score,{lives}));arcadeHud(0,"30s",`${lives} bolas`);
+ document.getElementById("arcadeControls").innerHTML='<button id="flipL">◀ FLIPPER</button><button id="flipR">FLIPPER ▶</button>';
+ const bind=(id,set)=>{const el=document.getElementById(id);el.onpointerdown=e=>{e.preventDefault();set(true)};const up=()=>set(false);el.onpointerup=el.onpointercancel=el.onpointerleave=up};bind("flipL",v=>left=v);bind("flipR",v=>right=v);
  function reset(){ball={x:180,y:90,vx:(Math.random()-.5)*4,vy:0,r:8}}
- function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;ball.vy+=.13*dt;ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<12||ball.x>W-12)ball.vx*=-.92;if(ball.y<12)ball.vy=Math.abs(ball.vy);for(const b of bumps){let dx=ball.x-b.x,dy=ball.y-b.y,d=Math.hypot(dx,dy);if(d<ball.r+b.r){let nx=dx/(d||1),ny=dy/(d||1);ball.x=b.x+nx*(ball.r+b.r+1);ball.y=b.y+ny*(ball.r+b.r+1);let speed=Math.max(4,Math.hypot(ball.vx,ball.vy));ball.vx=nx*speed*1.05;ball.vy=ny*speed*1.05;score+=50;document.getElementById("arcadeScore").textContent=score}}
-   if(ball.y>400&&ball.y<465){if(left&&ball.x<190&&ball.x>55){ball.vy=-6.5;ball.vx=3.2;score+=10}if(right&&ball.x>170&&ball.x<305){ball.vy=-6.5;ball.vx=-3.2;score+=10}}
+ function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;flipCooldown=Math.max(0,flipCooldown-dt);
+   ball.vy+=.13*dt;ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;
+   if(ball.x<12){ball.x=12;ball.vx=Math.abs(ball.vx)*.92}if(ball.x>W-12){ball.x=W-12;ball.vx=-Math.abs(ball.vx)*.92}if(ball.y<12){ball.y=12;ball.vy=Math.abs(ball.vy)}
+   for(const b of bumps){let dx=ball.x-b.x,dy=ball.y-b.y,d=Math.hypot(dx,dy);if(d<ball.r+b.r){let nx=dx/(d||1),ny=dy/(d||1);ball.x=b.x+nx*(ball.r+b.r+1);ball.y=b.y+ny*(ball.r+b.r+1);let speed=Math.max(4,Math.hypot(ball.vx,ball.vy));ball.vx=nx*speed*1.05;ball.vy=ny*speed*1.05;score+=50;document.getElementById("arcadeScore").textContent=score}}
+   if(ball.vy>0&&ball.y>400&&ball.y<465&&flipCooldown<=0){
+     if(left&&ball.x<190&&ball.x>55){ball.y=414;ball.vy=-6.5;ball.vx=3.2;score+=10;flipCooldown=7;document.getElementById("arcadeScore").textContent=score}
+     else if(right&&ball.x>170&&ball.x<305){ball.y=414;ball.vy=-6.5;ball.vx=-3.2;score+=10;flipCooldown=7;document.getElementById("arcadeScore").textContent=score}
+   }
    if(ball.y>H+20){lives--;document.getElementById("arcadeMeta").textContent=`${lives} bolas`;if(lives<=0)return finishArcade(score,{lives:0});reset()}
-   x.fillStyle="#09051b";x.fillRect(0,0,W,H);x.strokeStyle="#733cff";x.lineWidth=5;x.strokeRect(12,12,W-24,H-24);bumps.forEach((b,i)=>{x.beginPath();x.arc(b.x,b.y,b.r,0,Math.PI*2);x.fillStyle=["#ffb31a","#ef3cff","#28d9ff"][i];x.fill()});x.lineWidth=12;x.lineCap="round";x.strokeStyle=left?"#8fff47":"#657080";x.beginPath();x.moveTo(75,450);x.lineTo(left?165:145,left?420:460);x.stroke();x.strokeStyle=right?"#8fff47":"#657080";x.beginPath();x.moveTo(285,450);x.lineTo(right?195:215,right?420:460);x.stroke();x.beginPath();x.arc(ball.x,ball.y,ball.r,0,Math.PI*2);x.fillStyle="#fff";x.fill();arcadeRAF=requestAnimationFrame(loop)}arcadeEngine={cleanup:()=>document.getElementById("arcadeControls").innerHTML=""};arcadeRAF=requestAnimationFrame(loop)
+   x.fillStyle="#09051b";x.fillRect(0,0,W,H);x.strokeStyle="#733cff";x.lineWidth=5;x.strokeRect(12,12,W-24,H-24);bumps.forEach((b,i)=>{x.beginPath();x.arc(b.x,b.y,b.r,0,Math.PI*2);x.fillStyle=["#ffb31a","#ef3cff","#28d9ff"][i];x.fill()});
+   x.lineWidth=12;x.lineCap="round";x.strokeStyle=left?"#8fff47":"#657080";x.beginPath();x.moveTo(75,450);x.lineTo(left?165:145,left?420:460);x.stroke();x.strokeStyle=right?"#8fff47":"#657080";x.beginPath();x.moveTo(285,450);x.lineTo(right?195:215,right?420:460);x.stroke();x.beginPath();x.arc(ball.x,ball.y,ball.r,0,Math.PI*2);x.fillStyle="#fff";x.fill();arcadeRAF=requestAnimationFrame(loop)
+ }
+ arcadeEngine={cleanup:()=>document.getElementById("arcadeControls").innerHTML=""};arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gameBubble(ch){
@@ -1800,50 +1870,117 @@ function gamePlinko(ch){
 
 
 function gameBowling(ch){
- const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.throws||10);let score=0,throws=0,phase=0,last=0,busy=false;
- setupCountdown(ch.duration_ms||50000,()=>finishArcade(score,{throws}));arcadeHud(0,'50s',`${total} bolas`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="bowlThrow">LANÇAR</button>';document.getElementById('arcadeHint').textContent='A mira vai de um lado ao outro. Lance quando estiver no centro.';
- const btn=document.getElementById('bowlThrow');btn.onclick=()=>{if(busy||throws>=total)return;busy=true;throws++;const aim=(Math.sin(phase)+1)/2,dist=Math.abs(aim-.5)*2,pins=Math.max(0,10-Math.round(dist*12));score+=pins;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-throws} bolas`;setTimeout(()=>{busy=false;if(throws>=total)finishArcade(score,{throws})},500)};
- function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;phase+=.055*dt;x.fillStyle='#3a2016';x.fillRect(0,0,W,H);x.fillStyle='#c98b56';x.fillRect(55,20,W-110,H-40);for(let i=0;i<6;i++){x.fillStyle=i%2?'#d6a873':'#e8bc85';x.fillRect(55+i*(W-110)/6,20,2,H-40)}const pins=[[180,85],[165,105],[195,105],[150,127],[180,127],[210,127],[135,151],[165,151],[195,151],[225,151]];for(const p of pins){x.beginPath();x.arc(p[0],p[1],7,0,Math.PI*2);x.fillStyle='#fff';x.fill();x.fillStyle='#d33';x.fillRect(p[0]-6,p[1]-2,12,3)}const ax=75+((Math.sin(phase)+1)/2)*(W-150);x.strokeStyle='#8fff47';x.lineWidth=3;x.beginPath();x.moveTo(W/2,H-70);x.lineTo(ax,170);x.stroke();x.beginPath();x.arc(W/2,H-70,15,0,Math.PI*2);x.fillStyle='#20262f';x.fill();arcadeRAF=requestAnimationFrame(loop)}
- arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.throws||8);let score=0,throws=0,phase=0,last=0,busy=false,roll=null,lastPins=10;
+ setupCountdown(ch.duration_ms||50000,()=>finishArcade(score,{throws}));arcadeHud(0,'50s',`${total} bolas`);
+ document.getElementById('arcadeControls').innerHTML='<button class="go" id="bowlThrow">LANÇAR</button>';document.getElementById('arcadeHint').textContent='A mira vai de um lado ao outro. Lance quando estiver no centro.';
+ const btn=document.getElementById('bowlThrow');
+ btn.onclick=()=>{
+   if(busy||throws>=total)return;busy=true;btn.disabled=true;throws++;
+   const aim=(Math.sin(phase)+1)/2,dist=Math.abs(aim-.5)*2,pins=Math.max(0,10-Math.round(dist*12));
+   const targetX=75+aim*(W-150);
+   roll={p:0,duration:760,targetX,pins};document.getElementById('arcadeMeta').textContent=`${total-throws} bolas`;document.getElementById('arcadeHint').textContent='Bola rolando...'
+ };
+ function completeRoll(){const r=roll;if(!r)return;score+=r.pins;lastPins=r.pins;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeHint').textContent=r.pins===10?'STRIKE! 🎳':`${r.pins} pinos derrubados`;roll=null;busy=false;btn.disabled=false;if(throws>=total)arcadeLater(()=>finishArcade(score,{throws}),350)}
+ function loop(t){if(!arcadeRunning)return;const dtMs=Math.min(50,t-last||16);last=t;if(!busy)phase+=.0034*dtMs;
+   x.fillStyle='#3a2016';x.fillRect(0,0,W,H);x.fillStyle='#c98b56';x.fillRect(55,20,W-110,H-40);for(let i=0;i<6;i++){x.fillStyle=i%2?'#d6a873':'#e8bc85';x.fillRect(55+i*(W-110)/6,20,2,H-40)}
+   const pins=[[180,85],[165,105],[195,105],[150,127],[180,127],[210,127],[135,151],[165,151],[195,151],[225,151]];
+   pins.forEach((p,i)=>{const visible=!roll||i>=roll.pins||roll.p<.86;x.save();x.globalAlpha=visible?1:.18;x.beginPath();x.arc(p[0],p[1],7,0,Math.PI*2);x.fillStyle='#fff';x.fill();x.fillStyle='#d33';x.fillRect(p[0]-6,p[1]-2,12,3);x.restore()});
+   const aim=(Math.sin(phase)+1)/2,ax=75+aim*(W-150);x.strokeStyle='#8fff47';x.lineWidth=3;x.beginPath();x.moveTo(W/2,H-70);x.lineTo(ax,170);x.stroke();
+   let bx=W/2,by=H-70;
+   if(roll){roll.p=Math.min(1,roll.p+dtMs/roll.duration);const e=1-Math.pow(1-roll.p,2);bx=W/2+(roll.targetX-W/2)*e*.75;by=(H-70)+(155-(H-70))*e;if(roll.p>=1)completeRoll()}
+   x.beginPath();x.arc(bx,by,15,0,Math.PI*2);x.fillStyle='#20262f';x.fill();x.strokeStyle='#4d5b70';x.stroke();arcadeRAF=requestAnimationFrame(loop)
+ }
+ arcadeEngine={cleanup:()=>{btn.onclick=null;document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gameGolf(ch){
- const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.shots||10);let score=0,shots=0,phase=0,last=0,busy=false;
- setupCountdown(ch.duration_ms||50000,()=>finishArcade(score,{shots}));arcadeHud(0,'50s',`${total} tacadas`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="golfHit">BATER</button>';document.getElementById('arcadeHint').textContent='A linha de mira oscila. Bata quando ela estiver alinhada ao buraco.';
- document.getElementById('golfHit').onclick=()=>{if(busy||shots>=total)return;busy=true;shots++;const err=Math.abs(Math.sin(phase))*100;const pts=err<12?10:err<28?8:err<48?6:err<70?4:2;score+=pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-shots} tacadas`;setTimeout(()=>{busy=false;if(shots>=total)finishArcade(score,{shots})},420)};
- function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;phase+=.045*dt;x.fillStyle='#147344';x.fillRect(0,0,W,H);x.fillStyle='#1a8a52';x.beginPath();x.ellipse(W/2,125,115,65,0,0,Math.PI*2);x.fill();x.beginPath();x.arc(W/2,112,11,0,Math.PI*2);x.fillStyle='#111';x.fill();x.fillStyle='#fff';x.fillRect(W/2+4,55,3,58);x.fillStyle='#ff4d4d';x.beginPath();x.moveTo(W/2+7,55);x.lineTo(W/2+43,67);x.lineTo(W/2+7,78);x.fill();const angle=Math.sin(phase)*.42,dx=Math.sin(angle)*260,dy=-Math.cos(angle)*260;x.strokeStyle='#fff9';x.setLineDash([8,6]);x.beginPath();x.moveTo(W/2,H-80);x.lineTo(W/2+dx,H-80+dy);x.stroke();x.setLineDash([]);x.beginPath();x.arc(W/2,H-80,10,0,Math.PI*2);x.fillStyle='#fff';x.fill();arcadeRAF=requestAnimationFrame(loop)}
- arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.shots||10);let score=0,shots=0,phase=0,last=0,busy=false,flight=null;
+ setupCountdown(ch.duration_ms||50000,()=>finishArcade(score,{shots}));arcadeHud(0,'50s',`${total} tacadas`);
+ document.getElementById('arcadeControls').innerHTML='<button class="go" id="golfHit">BATER</button>';document.getElementById('arcadeHint').textContent='A linha de mira oscila. Bata quando ela estiver alinhada ao buraco.';
+ const btn=document.getElementById('golfHit');
+ btn.onclick=()=>{
+   if(busy||shots>=total)return;busy=true;btn.disabled=true;shots++;
+   const s=Math.sin(phase),err=Math.abs(s)*100,pts=err<12?10:err<28?8:err<48?6:err<70?4:2;
+   flight={p:0,duration:760,endX:W/2+s*110,endY:120,pts};document.getElementById('arcadeMeta').textContent=`${total-shots} tacadas`;document.getElementById('arcadeHint').textContent='Bola a caminho...'
+ };
+ function complete(){const f=flight;if(!f)return;score+=f.pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeHint').textContent=f.pts===10?'No alvo! ⛳':`+${f.pts} pontos`;flight=null;busy=false;btn.disabled=false;if(shots>=total)arcadeLater(()=>finishArcade(score,{shots}),350)}
+ function loop(t){if(!arcadeRunning)return;const dtMs=Math.min(50,t-last||16);last=t;if(!busy)phase+=.0028*dtMs;
+   x.fillStyle='#147344';x.fillRect(0,0,W,H);x.fillStyle='#1a8a52';x.beginPath();x.ellipse(W/2,125,115,65,0,0,Math.PI*2);x.fill();x.beginPath();x.arc(W/2,112,11,0,Math.PI*2);x.fillStyle='#111';x.fill();x.fillStyle='#fff';x.fillRect(W/2+4,55,3,58);x.fillStyle='#ff4d4d';x.beginPath();x.moveTo(W/2+7,55);x.lineTo(W/2+43,67);x.lineTo(W/2+7,78);x.fill();
+   const angle=Math.sin(phase)*.42,dx=Math.sin(angle)*260,dy=-Math.cos(angle)*260;x.strokeStyle='#fff9';x.setLineDash([8,6]);x.beginPath();x.moveTo(W/2,H-80);x.lineTo(W/2+dx,H-80+dy);x.stroke();x.setLineDash([]);
+   let bx=W/2,by=H-80;
+   if(flight){flight.p=Math.min(1,flight.p+dtMs/flight.duration);const p=flight.p,q=1-p,cpX=(W/2+flight.endX)/2,cpY=170;bx=q*q*(W/2)+2*q*p*cpX+p*p*flight.endX;by=q*q*(H-80)+2*q*p*cpY+p*p*flight.endY;if(p>=1)complete()}
+   x.beginPath();x.arc(bx,by,10,0,Math.PI*2);x.fillStyle='#fff';x.fill();x.strokeStyle='#d8d8d8';x.stroke();arcadeRAF=requestAnimationFrame(loop)
+ }
+ arcadeEngine={cleanup:()=>{btn.onclick=null;document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gameArchery(ch){
  const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.arrows||10);let score=0,shots=0,t=0,last=0;
  setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{shots}));arcadeHud(0,'45s',`${total} flechas`);document.getElementById('arcadeHint').textContent='Toque na tela para disparar quando a mira estiver no centro.';
- c.onpointerdown=e=>{if(shots>=total)return;e.preventDefault();const cx=W/2,cy=235,mx=cx+Math.sin(t)*115,my=cy+Math.sin(t*1.73)*90,d=Math.hypot(mx-cx,my-cy);const pts=d<20?10:d<45?8:d<70?6:d<100?4:2;score+=pts;shots++;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-shots} flechas`;if(shots>=total)setTimeout(()=>finishArcade(score,{shots}),200)};
+ c.onpointerdown=e=>{if(shots>=total)return;e.preventDefault();const cx=W/2,cy=235,mx=cx+Math.sin(t)*115,my=cy+Math.sin(t*1.73)*90,d=Math.hypot(mx-cx,my-cy);const pts=d<20?10:d<45?8:d<70?6:d<100?4:2;score+=pts;shots++;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-shots} flechas`;if(shots>=total)arcadeLater(()=>finishArcade(score,{shots}),200)};
  function loop(ts){if(!arcadeRunning)return;const dt=Math.min(2,(ts-last||16)/16);last=ts;t+=.045*dt;x.fillStyle='#10151d';x.fillRect(0,0,W,H);const cx=W/2,cy=235;for(const [r,col] of [[145,'#e8e2c9'],[115,'#20252d'],[85,'#236ab2'],[58,'#d83d4c'],[30,'#ffd83e']]){x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.fillStyle=col;x.fill()}const mx=cx+Math.sin(t)*115,my=cy+Math.sin(t*1.73)*90;x.strokeStyle='#8fff47';x.lineWidth=2;x.beginPath();x.arc(mx,my,15,0,Math.PI*2);x.moveTo(mx-22,my);x.lineTo(mx+22,my);x.moveTo(mx,my-22);x.lineTo(mx,my+22);x.stroke();arcadeRAF=requestAnimationFrame(loop)}
  arcadeEngine={cleanup:()=>{c.onpointerdown=null;document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gameGoalkeeper(ch){
- const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.shots||10);let score=0,shot=0,zone=-1,open=false,timer=null;const zones=[{x:75,y:150},{x:180,y:145},{x:285,y:150},{x:100,y:255},{x:260,y:255}];
- setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{shots:shot}));arcadeHud(0,'45s',`${total} cobranças`);document.getElementById('arcadeHint').textContent='Quando a bola aparecer, toque rapidamente no mesmo setor.';
- function next(){if(shot>=total)return finishArcade(score,{shots:shot});zone=Math.floor(Math.random()*5);open=true;shot++;document.getElementById('arcadeMeta').textContent=`${total-shot} cobranças`;draw();clearTimeout(timer);timer=setTimeout(()=>{open=false;setTimeout(next,320)},850)}
- c.onpointerdown=e=>{if(!open)return;e.preventDefault();const p=canvasPoint(e);let best=0,bd=1e9;zones.forEach((z,i)=>{const d=Math.hypot(z.x-p.x,z.y-p.y);if(d<bd){bd=d;best=i}});if(best===zone){score++;document.getElementById('arcadeScore').textContent=score}open=false;clearTimeout(timer);draw();setTimeout(next,300)};
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.shots||10);let score=0,shot=0,zone=-1,open=false;
+ const zones=[{x:75,y:150},{x:180,y:145},{x:285,y:150},{x:100,y:255},{x:260,y:255}];
+ setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{shots:shot}));arcadeHud(0,'45s',`${total} cobranças`);
+ document.getElementById('arcadeHint').textContent='Quando a bola aparecer, toque rapidamente no mesmo setor.';
+ function next(){
+   if(!arcadeRunning)return;if(shot>=total)return finishArcade(score,{shots:shot});
+   zone=Math.floor(Math.random()*5);open=true;shot++;document.getElementById('arcadeMeta').textContent=`${total-shot} cobranças`;draw();
+   arcadeLater(()=>{open=false;draw();arcadeLater(next,320)},850)
+ }
+ c.onpointerdown=e=>{
+   if(!open||!arcadeRunning)return;e.preventDefault();const p=canvasPoint(e);let best=0,bd=1e9;
+   zones.forEach((z,i)=>{const d=Math.hypot(z.x-p.x,z.y-p.y);if(d<bd){bd=d;best=i}});
+   if(best===zone){score++;document.getElementById('arcadeScore').textContent=score}
+   open=false;draw();arcadeLater(next,300)
+ };
  function draw(){x.fillStyle='#0d5e32';x.fillRect(0,0,W,H);x.strokeStyle='#fff';x.lineWidth=5;x.strokeRect(35,70,W-70,245);zones.forEach((z,i)=>{x.beginPath();x.arc(z.x,z.y,38,0,Math.PI*2);x.fillStyle=i===zone&&open?'#ffffff25':'#00000018';x.fill();x.strokeStyle='#ffffff22';x.stroke()});x.fillStyle='#ffd83d';x.fillRect(W/2-35,275,70,16);if(open){x.beginPath();x.arc(zones[zone].x,zones[zone].y,11,0,Math.PI*2);x.fillStyle='#fff';x.fill()}}
- draw();setTimeout(next,500);arcadeEngine={cleanup:()=>{clearTimeout(timer);c.onpointerdown=null;document.getElementById('arcadeHint').textContent=''}}
+ draw();arcadeLater(next,500);arcadeEngine={cleanup:()=>{c.onpointerdown=null;document.getElementById('arcadeHint').textContent=''}}
 }
 
 function gameSkeeBall(ch){
- const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.balls||10);let score=0,balls=0,phase=0,last=0;
- setupCountdown(ch.duration_ms||50000,()=>finishArcade(score,{balls}));arcadeHud(0,'50s',`${total} bolas`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="skeeThrow">LANÇAR</button>';document.getElementById('arcadeHint').textContent='A força sobe e desce. Lance perto da marca verde.';
- document.getElementById('skeeThrow').onclick=()=>{if(balls>=total)return;balls++;const v=(Math.sin(phase)+1)/2,err=Math.abs(v-.72);const pts=err<.06?50:err<.13?40:err<.22?30:err<.32?20:10;score+=pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-balls} bolas`;if(balls>=total)setTimeout(()=>finishArcade(score,{balls}),220)};
- function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;phase+=.065*dt;const v=(Math.sin(phase)+1)/2;x.fillStyle='#4b2915';x.fillRect(0,0,W,H);x.fillStyle='#c27639';x.beginPath();x.moveTo(55,H-20);x.lineTo(130,190);x.lineTo(230,190);x.lineTo(W-55,H-20);x.fill();for(const [yy,r,pts] of [[125,38,50],[185,50,40],[250,64,30]]){x.beginPath();x.arc(W/2,yy,r,0,Math.PI*2);x.fillStyle='#17191e';x.fill();x.fillStyle='#fff';x.font='bold 14px system-ui';x.textAlign='center';x.fillText(String(pts),W/2,yy+5)}x.fillStyle='#17202a';x.fillRect(45,H-72,W-90,18);x.fillStyle='#8fff47';x.fillRect(45+(W-90)*.68,H-72,(W-90)*.08,18);x.fillStyle='#fff';x.fillRect(45+(W-90)*v-3,H-78,6,30);arcadeRAF=requestAnimationFrame(loop)}arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.balls||10);let score=0,balls=0,phase=0,last=0,busy=false,flight=null;
+ setupCountdown(ch.duration_ms||50000,()=>finishArcade(score,{balls}));arcadeHud(0,'50s',`${total} bolas`);
+ document.getElementById('arcadeControls').innerHTML='<button class="go" id="skeeThrow">LANÇAR</button>';document.getElementById('arcadeHint').textContent='A força sobe e desce. Lance perto da marca verde.';
+ const btn=document.getElementById('skeeThrow');
+ btn.onclick=()=>{
+   if(busy||balls>=total)return;busy=true;btn.disabled=true;balls++;
+   const v=(Math.sin(phase)+1)/2,err=Math.abs(v-.72),pts=err<.06?50:err<.13?40:err<.22?30:err<.32?20:10;
+   const targetY=pts>=50?125:pts>=40?185:pts>=30?250:310;flight={p:0,duration:760,pts,targetY};document.getElementById('arcadeMeta').textContent=`${total-balls} bolas`
+ };
+ function complete(){const f=flight;if(!f)return;score+=f.pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeHint').textContent=`+${f.pts} pontos`;flight=null;busy=false;btn.disabled=false;if(balls>=total)arcadeLater(()=>finishArcade(score,{balls}),350)}
+ function loop(t){if(!arcadeRunning)return;const dtMs=Math.min(50,t-last||16);last=t;if(!busy)phase+=.0041*dtMs;const v=(Math.sin(phase)+1)/2;
+   x.fillStyle='#4b2915';x.fillRect(0,0,W,H);x.fillStyle='#c27639';x.beginPath();x.moveTo(55,H-20);x.lineTo(130,190);x.lineTo(230,190);x.lineTo(W-55,H-20);x.fill();
+   for(const [yy,r,pts] of [[125,38,50],[185,50,40],[250,64,30]]){x.beginPath();x.arc(W/2,yy,r,0,Math.PI*2);x.fillStyle='#17191e';x.fill();x.fillStyle='#fff';x.font='bold 14px system-ui';x.textAlign='center';x.fillText(String(pts),W/2,yy+5)}
+   x.fillStyle='#17202a';x.fillRect(45,H-72,W-90,18);x.fillStyle='#8fff47';x.fillRect(45+(W-90)*.68,H-72,(W-90)*.08,18);x.fillStyle='#fff';x.fillRect(45+(W-90)*v-3,H-78,6,30);
+   if(flight){flight.p=Math.min(1,flight.p+dtMs/flight.duration);const p=flight.p,q=1-p,bx=W/2+Math.sin(p*Math.PI)*28,by=q*q*(H-45)+2*q*p*160+p*p*flight.targetY;x.beginPath();x.arc(bx,by,10,0,Math.PI*2);x.fillStyle='#fff';x.fill();if(p>=1)complete()}
+   arcadeRAF=requestAnimationFrame(loop)
+ }
+ arcadeEngine={cleanup:()=>{btn.onclick=null;document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gameDiscTarget(ch){
- const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.throws||10);let score=0,throws=0,phase=0,last=0;
- setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{throws}));arcadeHud(0,'45s',`${total} discos`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="discThrow">LANÇAR DISCO</button>';document.getElementById('arcadeHint').textContent='O alvo se move. Lance quando ele cruzar a linha central.';
- document.getElementById('discThrow').onclick=()=>{if(throws>=total)return;throws++;const tx=W/2+Math.sin(phase)*120,err=Math.abs(tx-W/2);const pts=err<20?30:err<55?20:err<95?10:0;score+=pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-throws} discos`;if(throws>=total)setTimeout(()=>finishArcade(score,{throws}),200)};
- function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;phase+=.05*dt;const tx=W/2+Math.sin(phase)*120,ty=175+Math.sin(phase*.7)*38;x.fillStyle='#13233f';x.fillRect(0,0,W,H);x.strokeStyle='#ffffff22';x.beginPath();x.moveTo(W/2,0);x.lineTo(W/2,H);x.stroke();for(const [r,col] of [[55,'#f2f2e8'],[38,'#e84747'],[20,'#ffd83d']]){x.beginPath();x.arc(tx,ty,r,0,Math.PI*2);x.fillStyle=col;x.fill()}x.beginPath();x.ellipse(W/2,H-80,34,10,0,0,Math.PI*2);x.fillStyle='#8ec9ff';x.fill();arcadeRAF=requestAnimationFrame(loop)}arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.throws||10);let score=0,throws=0,phase=0,last=0,busy=false,flight=null;
+ setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{throws}));arcadeHud(0,'45s',`${total} discos`);
+ document.getElementById('arcadeControls').innerHTML='<button class="go" id="discThrow">LANÇAR DISCO</button>';document.getElementById('arcadeHint').textContent='O alvo se move. Lance quando ele cruzar a linha central.';
+ const btn=document.getElementById('discThrow');
+ btn.onclick=()=>{
+   if(busy||throws>=total)return;busy=true;btn.disabled=true;throws++;
+   const tx=W/2+Math.sin(phase)*120,ty=175+Math.sin(phase*.7)*38,err=Math.abs(tx-W/2),pts=err<20?30:err<55?20:err<95?10:0;
+   flight={p:0,duration:650,tx,ty,pts};document.getElementById('arcadeMeta').textContent=`${total-throws} discos`
+ };
+ function complete(){const f=flight;if(!f)return;score+=f.pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeHint').textContent=f.pts?`Acertou! +${f.pts}`:'Passou longe';flight=null;busy=false;btn.disabled=false;if(throws>=total)arcadeLater(()=>finishArcade(score,{throws}),330)}
+ function loop(t){if(!arcadeRunning)return;const dtMs=Math.min(50,t-last||16);last=t;if(!busy)phase+=.0032*dtMs;const tx=W/2+Math.sin(phase)*120,ty=175+Math.sin(phase*.7)*38;
+   x.fillStyle='#13233f';x.fillRect(0,0,W,H);x.strokeStyle='#ffffff22';x.beginPath();x.moveTo(W/2,0);x.lineTo(W/2,H);x.stroke();for(const [r,col] of [[55,'#f2f2e8'],[38,'#e84747'],[20,'#ffd83d']]){x.beginPath();x.arc(tx,ty,r,0,Math.PI*2);x.fillStyle=col;x.fill()}
+   let dx=W/2,dy=H-80,scale=1;
+   if(flight){flight.p=Math.min(1,flight.p+dtMs/flight.duration);const p=flight.p,e=1-Math.pow(1-p,2);dx=W/2+(flight.tx-W/2)*e;dy=(H-80)+(flight.ty-(H-80))*e;scale=1-p*.55;if(p>=1)complete()}
+   x.save();x.translate(dx,dy);x.scale(scale,scale);x.rotate((flight?.p||0)*8);x.beginPath();x.ellipse(0,0,34,10,0,0,Math.PI*2);x.fillStyle='#8ec9ff';x.fill();x.restore();arcadeRAF=requestAnimationFrame(loop)
+ }
+ arcadeEngine={cleanup:()=>{btn.onclick=null;document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gamePool(ch){

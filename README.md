@@ -1,4 +1,4 @@
-# BetPllayy Frontend V8.1.1 Hotfix
+# BetPllayy V8.1.2 — QA Hotfix
 
-Corrige animação do Basket Shot e desaparecimento da bola branca na Sinuca Pro.
-Mantenha o `.assetsignore` já existente no GitHub.
+Somente frontend. Substitua os arquivos no `betpllayy-frontend`.
+Mantenha o `.assetsignore` que já existe no GitHub.
