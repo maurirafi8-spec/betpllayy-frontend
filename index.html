@@ -38,7 +38,7 @@ h1{font-size:22px;margin:0}.muted{color:var(--muted)}.balance{border:1px solid v
 @media(max-width:360px){.gameCover{height:145px}.gameCover .coverIcon{font-size:45px}.casinoCardBody p{display:none}}
 
 
-.arenaModes{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:11px 0}.arenaModes button,.arenaDifficulty button{border:1px solid #354158;background:#182130;color:#c8d0db;border-radius:12px;padding:10px 5px;font-weight:900}.arenaModes button.active,.arenaDifficulty button.active{background:var(--green);color:#071006;border-color:var(--green)}.arenaDifficulty{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0 12px}.arenaPanel{display:none;background:#0f1620;border:1px solid #28364c;border-radius:14px;padding:11px;margin:10px 0}.arenaPanel.show{display:block}.arenaRoomCode{font-size:31px;font-weight:1000;letter-spacing:7px;text-align:center;color:#b7ff73;margin:10px 0}.arenaVs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:12px 0}.arenaPlayer{background:#111a25;border:1px solid #2a3a50;border-radius:14px;padding:10px;text-align:center}.arenaPlayer b{display:block;font-size:18px}.arenaPlayer small{color:var(--muted)}.cover-pong{background:linear-gradient(145deg,#082044,#0f5d7b 55%,#071018)}.cover-airhockey{background:radial-gradient(circle,#59d9ff55,transparent 30%),linear-gradient(145deg,#10223c,#34165b)}.cover-penalty{background:linear-gradient(145deg,#0e5f2e,#0b361c 55%,#0e1116)}.cover-darts{background:radial-gradient(circle,#ff3344 0 12%,#f6f1d4 13% 24%,#1e242c 25% 38%,#f6f1d4 39% 50%,#151920 51%)}.cover-basket{background:linear-gradient(145deg,#d8600c,#50210b 55%,#10131a)}.cover-memory{background:linear-gradient(135deg,#5120a5,#167db0 55%,#10131a)}
+.arenaModes{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:11px 0}.arenaModes button,.arenaDifficulty button{border:1px solid #354158;background:#182130;color:#c8d0db;border-radius:12px;padding:10px 5px;font-weight:900}.arenaModes button.active,.arenaDifficulty button.active{background:var(--green);color:#071006;border-color:var(--green)}.arenaDifficulty{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0 12px}.arenaPanel{display:none;background:#0f1620;border:1px solid #28364c;border-radius:14px;padding:11px;margin:10px 0}.arenaPanel.show{display:block}.arenaRoomCode{font-size:31px;font-weight:1000;letter-spacing:7px;text-align:center;color:#b7ff73;margin:10px 0}.arenaVs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:12px 0}.arenaPlayer{background:#111a25;border:1px solid #2a3a50;border-radius:14px;padding:10px;text-align:center}.arenaPlayer b{display:block;font-size:18px}.arenaPlayer small{color:var(--muted)}.cover-pong{background:linear-gradient(145deg,#082044,#0f5d7b 55%,#071018)}.cover-airhockey{background:radial-gradient(circle,#59d9ff55,transparent 30%),linear-gradient(145deg,#10223c,#34165b)}.cover-penalty{background:linear-gradient(145deg,#0e5f2e,#0b361c 55%,#0e1116)}.cover-darts{background:radial-gradient(circle,#ff3344 0 12%,#f6f1d4 13% 24%,#1e242c 25% 38%,#f6f1d4 39% 50%,#151920 51%)}.cover-basket{background:linear-gradient(145deg,#d8600c,#50210b 55%,#10131a)}.cover-memory{background:linear-gradient(135deg,#5120a5,#167db0 55%,#10131a)}.cover-bowling{background:linear-gradient(150deg,#9f1e27,#241115 58%,#e8e5dc)}.cover-golf{background:linear-gradient(145deg,#0a6a37,#103b25 60%,#d6f074)}.cover-archery{background:radial-gradient(circle at 65% 35%,#ffdb45 0 7%,#d73d4e 8% 15%,#f5f0df 16% 24%,#185f91 25% 34%,#151a22 35%)}.cover-goalkeeper{background:linear-gradient(145deg,#0b6b39,#10321f 55%,#e7f2ff)}.cover-skeeball{background:linear-gradient(145deg,#b64918,#43220f 55%,#eab44e)}.cover-disctarget{background:linear-gradient(145deg,#2856a9,#18223a 55%,#ff6d4a)}
 </style>
 </head>
 <body>
@@ -244,7 +244,6 @@ h1{font-size:22px;margin:0}.muted{color:var(--muted)}.balance{border:1px solid v
       <div class="arenaModes">
         <button data-arena-mode="solo">SOLO</button><button data-arena-mode="cpu" class="active">VS CPU</button><button data-arena-mode="pvp">PVP</button>
       </div>
-      <div id="arenaCpuPanel" class="arenaPanel show"><small class="muted">Dificuldade do computador</small><div class="arenaDifficulty"><button data-arena-diff="easy">FÁCIL</button><button data-arena-diff="medium" class="active">MÉDIO</button><button data-arena-diff="hard">DIFÍCIL</button></div></div>
       <div id="arenaPvpPanel" class="arenaPanel"><small class="muted">Crie uma sala ou entre com o código de 6 caracteres.</small><input id="arenaJoinCode" class="input" maxlength="6" placeholder="CÓDIGO DA SALA" style="text-transform:uppercase;margin-top:8px"><button class="btn" id="arenaJoinBtn" style="width:100%;margin-top:8px">ENTRAR NA SALA</button></div>
       <button class="btn" id="arcadeStart" style="width:100%">JOGAR CONTRA CPU</button>
     </div>
@@ -1255,10 +1254,10 @@ document.getElementById("copyReferral").onclick=copyReferral;
 
 
 const casinoGameNames={
-  pool:"Sinuca Pro", pong:"Pong Arena", airhockey:"Air Hockey", penalty:"Pênalti Pro", darts:"Dardos 301", basket:"Basket Shot", memory:"Memory Duel", brickblast:"Brick Blast", lanerush:"Lane Rush", pinball:"Neon Pinball", bubbledrop:"Bubble Drop", plinko:"Drop Shot",
+  pool:"Sinuca Pro", pong:"Pong Arena", airhockey:"Air Hockey", penalty:"Pênalti Pro", darts:"Dardos 301", basket:"Basket Shot", memory:"Memory Duel", brickblast:"Brick Blast", lanerush:"Lane Rush", pinball:"Neon Pinball", bubbledrop:"Bubble Drop", plinko:"Drop Shot", bowling:"Boliche Pro", golf:"Golf Precision", archery:"Arco Pro", goalkeeper:"Goleiro Reflexo", skeeball:"Skee Ball", disctarget:"Disco Alvo",
   slots:"Slots", tiger:"Tigre Dourado", airplane:"Avião", mines:"Minas", wheel:"Roda da Sorte", coinflip:"Cara ou Coroa", limbo:"Limbo", roulette:"Roleta", dice:"Dados"
 };
-const ARCADE_GAMES=new Set(["pool","pong","airhockey","penalty","darts","basket","memory","brickblast","lanerush","pinball","bubbledrop","plinko"]);
+const ARCADE_GAMES=new Set(["pool","pong","airhockey","penalty","darts","basket","memory","brickblast","lanerush","pinball","bubbledrop","plinko","bowling","golf","archery","goalkeeper","skeeball","disctarget"]);
 const arcadeInfo={
   pool:{icon:"🎱",cover:"pool",text:"Sinuca completa: 15 bolas + branca, taco, linha de mira, força no arrasto e física aprimorada."},
   pong:{icon:"🏓",cover:"pong",text:"Controle a raquete inferior, vença a defesa automática e marque o máximo de pontos."},
@@ -1271,7 +1270,13 @@ const arcadeInfo={
   lanerush:{icon:"🏎️",cover:"lane",text:"Troque de faixa no momento certo e sobreviva ao trânsito."},
   pinball:{icon:"🔵",cover:"pinball",text:"Use os dois flippers para rebater a bola e acertar os bumpers."},
   bubbledrop:{icon:"🫧",cover:"bubble",text:"Mova a bolha para cair na coluna da mesma cor."},
-  plinko:{icon:"🔻",cover:"drop",text:"Escolha o ponto de queda. A bola desce pelos pinos até uma casa de prêmio."}
+  plinko:{icon:"🔻",cover:"drop",text:"Escolha o ponto de queda. A bola desce pelos pinos até uma casa de prêmio."},
+  bowling:{icon:"🎳",cover:"bowling",text:"Acerte o centro da pista e derrube o máximo de pinos em 10 lançamentos."},
+  golf:{icon:"⛳",cover:"golf",text:"Pare direção e força no ponto certo para mandar a bola perto do buraco."},
+  archery:{icon:"🏹",cover:"archery",text:"A mira se move. Dispare no momento certo para acertar o centro do alvo."},
+  goalkeeper:{icon:"🧤",cover:"goalkeeper",text:"Defenda 10 cobranças tocando rapidamente no setor para onde a bola vai."},
+  skeeball:{icon:"🎟️",cover:"skeeball",text:"Controle a força e coloque a bola nos anéis de maior pontuação."},
+  disctarget:{icon:"🥏",cover:"disctarget",text:"O alvo se movimenta. Lance o disco no momento certo para acertar o centro."}
 };
 
 function casinoRequestId(){
@@ -1595,19 +1600,18 @@ async function playCasino(){
 
 
 let arcadeGame=null,arcadeRound=null,arcadeRunning=false,arcadeFinishing=false,arcadeRAF=0,arcadeTimer=0,arcadeEngine=null;
-let arcadeMode="cpu",arcadeDifficulty="medium",arenaMatch=null,arenaPollTimer=0;
+let arcadeMode="cpu",arenaMatch=null,arenaPollTimer=0;
 const AC=()=>document.getElementById("arcadeCanvas"), AX=()=>AC().getContext("2d");
 function setArcadeBet(v){document.getElementById("arcadeBet").value=Number(v).toFixed(2)} window.setArcadeBet=setArcadeBet;
 function arcadeHud(score,time,meta){document.getElementById("arcadeScore").textContent=score;document.getElementById("arcadeTime").textContent=time;document.getElementById("arcadeMeta").textContent=meta}
 function arcadeStop(){arcadeRunning=false;cancelAnimationFrame(arcadeRAF);clearInterval(arcadeTimer);clearInterval(arenaPollTimer);arcadeRAF=0;arcadeTimer=0;arenaPollTimer=0;if(arcadeEngine?.cleanup)try{arcadeEngine.cleanup()}catch(e){}arcadeEngine=null}
 function canvasPoint(ev){const r=AC().getBoundingClientRect(),t=ev.touches?.[0]||ev.changedTouches?.[0]||ev;return{x:(t.clientX-r.left)*AC().width/r.width,y:(t.clientY-r.top)*AC().height/r.height}}
-function setArenaMode(mode){arcadeMode=mode;document.querySelectorAll('[data-arena-mode]').forEach(b=>b.classList.toggle('active',b.dataset.arenaMode===mode));document.getElementById('arenaCpuPanel').classList.toggle('show',mode==='cpu');document.getElementById('arenaPvpPanel').classList.toggle('show',mode==='pvp');document.getElementById('arcadeStart').textContent=mode==='solo'?'INICIAR SOLO':mode==='cpu'?'JOGAR CONTRA CPU':'CRIAR SALA PVP'}
-function setArenaDifficulty(diff){arcadeDifficulty=diff;document.querySelectorAll('[data-arena-diff]').forEach(b=>b.classList.toggle('active',b.dataset.arenaDiff===diff))}
+function setArenaMode(mode){arcadeMode=mode;document.querySelectorAll('[data-arena-mode]').forEach(b=>b.classList.toggle('active',b.dataset.arenaMode===mode));document.getElementById('arenaPvpPanel').classList.toggle('show',mode==='pvp');document.getElementById('arcadeStart').textContent=mode==='solo'?'INICIAR SOLO':mode==='cpu'?'JOGAR CONTRA CPU':'CRIAR SALA PVP'}
 function openArcadeGame(game){
-  arcadeStop();arcadeGame=game;arcadeRound=null;arenaMatch=null;arcadeFinishing=false;arcadeMode="cpu";arcadeDifficulty="medium";
+  arcadeStop();arcadeGame=game;arcadeRound=null;arenaMatch=null;arcadeFinishing=false;arcadeMode="cpu";
   const info=arcadeInfo[game]||{};document.getElementById("arcadeTitle").textContent=casinoGameNames[game]||"Arcade";document.getElementById("arcadeSubtitle").textContent="Solo • VS CPU • PVP";document.getElementById("arcadeBalance").textContent=brl(balanceCents);
   const hero=document.getElementById("arcadePrepHero");hero.className=`arcadePrepHero cover-${info.cover||"brick"}`;hero.textContent=info.icon||"🎮";document.getElementById("arcadePrepText").textContent=info.text||"";
-  document.getElementById("arcadePrep").style.display="block";document.getElementById("arenaWaiting").style.display="none";document.getElementById("arcadeLive").style.display="none";document.getElementById("arcadeFinish").style.display="none";document.getElementById("arcadeModal").classList.add("open");setArcadeBet(.5);setArenaMode('cpu');setArenaDifficulty('medium');document.getElementById('arenaJoinCode').value='';document.getElementById('arenaCancelBtn').style.display='block';document.getElementById('arenaWaitingTitle').textContent='Sala PVP';
+  document.getElementById("arcadePrep").style.display="block";document.getElementById("arenaWaiting").style.display="none";document.getElementById("arcadeLive").style.display="none";document.getElementById("arcadeFinish").style.display="none";document.getElementById("arcadeModal").classList.add("open");setArcadeBet(.5);setArenaMode('cpu');document.getElementById('arenaJoinCode').value='';document.getElementById('arenaCancelBtn').style.display='block';document.getElementById('arenaWaitingTitle').textContent='Sala PVP';
 }
 window.openArcadeGame=openArcadeGame;
 function closeArcade(){if(arcadeRunning&&!confirm("Sair da rodada? A jogada atual não terá prêmio."))return;arcadeStop();document.getElementById("arcadeModal").classList.remove("open");loadCasino().catch(()=>{})}
@@ -1620,7 +1624,7 @@ async function startArcade(){
   const btn=document.getElementById("arcadeStart");btn.disabled=true;btn.textContent="INICIANDO...";
   try{
     if(arcadeMode==='solo'){const d=await api("/api/casino/arcade/start",{method:"POST",body:JSON.stringify({request_id:casinoRequestId(),game:arcadeGame,bet_cents:bet})});arcadeRound=d.round;updateArenaBalance(d.balance_cents);document.getElementById("arcadePrep").style.display="none";document.getElementById("arcadeLive").style.display="block";arcadeRunning=true;launchArcadeEngine(arcadeGame,arcadeRound.challenge_json||{});}
-    else{const d=await api('/api/casino/arena/create',{method:'POST',body:JSON.stringify({game:arcadeGame,mode:arcadeMode,difficulty:arcadeDifficulty,bet_cents:bet})});if(arcadeMode==='pvp')showArenaWaiting(d);else beginArenaRound(d)}
+    else{const d=await api('/api/casino/arena/create',{method:'POST',body:JSON.stringify({game:arcadeGame,mode:arcadeMode,bet_cents:bet})});if(arcadeMode==='pvp')showArenaWaiting(d);else beginArenaRound(d)}
   }catch(e){if(e.data?.error==='insufficient_balance')toast('Saldo insuficiente.');else toast('Não foi possível iniciar o jogo.')}finally{btn.disabled=false;setArenaMode(arcadeMode)}
 }
 async function joinArena(){const code=String(document.getElementById('arenaJoinCode').value||'').trim().toUpperCase();if(code.length!==6)return toast('Digite o código de 6 caracteres.');const btn=document.getElementById('arenaJoinBtn');btn.disabled=true;btn.textContent='ENTRANDO...';try{const d=await api('/api/casino/arena/join',{method:'POST',body:JSON.stringify({code})});arcadeGame=d.match.game;document.getElementById('arcadeTitle').textContent=casinoGameNames[arcadeGame]||'Arcade';beginArenaRound(d)}catch(e){const c=e.data?.error;toast(c==='arena_not_found'?'Sala não encontrada.':c==='arena_not_joinable'?'Essa sala não está disponível.':c==='arena_cannot_join_self'?'Use outro jogador para entrar na sua sala.':c==='insufficient_balance'?'Saldo insuficiente.':'Não foi possível entrar na sala.')}finally{btn.disabled=false;btn.textContent='ENTRAR NA SALA'}}
@@ -1636,7 +1640,7 @@ async function finishArcade(score,metrics={}){
 function showArenaResult(d){clearInterval(arenaPollTimer);arenaPollTimer=0;updateArenaBalance(d.balance_cents);document.getElementById('arenaWaiting').style.display='none';document.getElementById('arcadeLive').style.display='none';document.getElementById('arcadeFinish').style.display='block';const me=d.player||{};let result='EMPATE',detail='';if(d.match.mode==='cpu'){const my=Number(me.score||0),cpu=Number(d.match.cpu_score||0);result=Number(me.compare_points)>Number((d.match.game==='plinko'?(d.match.challenge_json?.multipliers?.[cpu]||0)*100:cpu))?'VITÓRIA':Number(me.compare_points)===Number((d.match.game==='plinko'?(d.match.challenge_json?.multipliers?.[cpu]||0)*100:cpu))?'EMPATE':'DERROTA';detail=`Você ${my} × CPU ${cpu}`;}else{const other=(d.players||[]).find(p=>String(p.telegram_id)!==String(tgUser?.id));const my=Number(me.score||0),op=Number(other?.score||0);result=Number(me.compare_points)>Number(other?.compare_points)?'VITÓRIA':Number(me.compare_points)===Number(other?.compare_points)?'EMPATE':'DERROTA';detail=`Você ${my} × ${other?.first_name||'Adversário'} ${op}`;}document.getElementById('arcadeFinishIcon').textContent=result==='VITÓRIA'?'🏆':result==='EMPATE'?'🤝':'⚔️';document.getElementById('arcadeFinishTitle').textContent=result;document.getElementById('arcadeFinishScore').textContent=detail;document.getElementById('arcadeFinishPayout').textContent=Number(me.payout_cents||0)>0?`Retorno ${brl(me.payout_cents)}`:'Sem prêmio';document.getElementById('arenaCancelBtn').style.display='block'}
 
 function setupCountdown(ms,onEnd){const deadline=Date.now()+Number(ms||30000);const tick=()=>{const left=Math.max(0,deadline-Date.now());document.getElementById("arcadeTime").textContent=`${Math.ceil(left/1000)}s`;if(left<=0)onEnd()};tick();arcadeTimer=setInterval(tick,200);return deadline}
-function launchArcadeEngine(game,ch){if(game==="pool")return gamePool(ch);if(game==="pong")return gamePong(ch);if(game==="airhockey")return gameAirHockey(ch);if(game==="penalty")return gamePenalty(ch);if(game==="darts")return gameDarts(ch);if(game==="basket")return gameBasket(ch);if(game==="memory")return gameMemory(ch);if(game==="brickblast")return gameBrick(ch);if(game==="lanerush")return gameLane(ch);if(game==="pinball")return gamePinball(ch);if(game==="bubbledrop")return gameBubble(ch);if(game==="plinko")return gamePlinko(ch)}
+function launchArcadeEngine(game,ch){if(game==="pool")return gamePool(ch);if(game==="pong")return gamePong(ch);if(game==="airhockey")return gameAirHockey(ch);if(game==="penalty")return gamePenalty(ch);if(game==="darts")return gameDarts(ch);if(game==="basket")return gameBasket(ch);if(game==="memory")return gameMemory(ch);if(game==="brickblast")return gameBrick(ch);if(game==="lanerush")return gameLane(ch);if(game==="pinball")return gamePinball(ch);if(game==="bubbledrop")return gameBubble(ch);if(game==="plinko")return gamePlinko(ch);if(game==="bowling")return gameBowling(ch);if(game==="golf")return gameGolf(ch);if(game==="archery")return gameArchery(ch);if(game==="goalkeeper")return gameGoalkeeper(ch);if(game==="skeeball")return gameSkeeBall(ch);if(game==="disctarget")return gameDiscTarget(ch)}
 
 
 function gamePong(ch){
@@ -1710,6 +1714,54 @@ function gamePlinko(ch){
  const c=AC(),x=AX(),W=c.width,H=c.height;const mult=ch.multipliers||[5,2,1.2,.5,.2,.5,1.2,2,5];let ball={x:W/2,y:35,vx:0,vy:0,r:7},dropped=false,last=0;const pegs=[];for(let row=0;row<8;row++){const count=row+2,spacing=W/(count+1);for(let i=0;i<count;i++)pegs.push({x:spacing*(i+1),y:100+row*42,r:5})}arcadeHud("—","∞","arraste");document.getElementById("arcadeHint").textContent="Arraste a bola no topo para escolher a posição e toque em SOLTAR.";document.getElementById("arcadeControls").innerHTML='<button class="go" id="dropBall">SOLTAR BOLA</button>';const move=e=>{if(dropped)return;e.preventDefault();const p=canvasPoint(e);ball.x=Math.max(15,Math.min(W-15,p.x))};c.onpointerdown=move;c.onpointermove=move;document.getElementById("dropBall").onclick=()=>{if(dropped)return;dropped=true;ball.vy=1;document.getElementById("arcadeControls").innerHTML="";document.getElementById("arcadeMeta").textContent="caindo"};
  function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;if(dropped){ball.vy+=.16*dt;ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<ball.r||ball.x>W-ball.r)ball.vx*=-.75;for(const p of pegs){const dx=ball.x-p.x,dy=ball.y-p.y,d=Math.hypot(dx,dy);if(d<ball.r+p.r){const nx=dx/(d||1),ny=dy/(d||1);ball.x=p.x+nx*(ball.r+p.r+1);ball.y=p.y+ny*(ball.r+p.r+1);ball.vx=nx*2.2+(Math.random()-.5)*.6;ball.vy=Math.abs(ball.vy)*.45+1.4}}if(ball.y>H-55){const slot=Math.max(0,Math.min(8,Math.floor(ball.x/(W/9))));document.getElementById("arcadeScore").textContent=`${mult[slot]}x`;return finishArcade(slot,{slot,multiplier:mult[slot]})}}
  x.fillStyle="#071429";x.fillRect(0,0,W,H);pegs.forEach(p=>{x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle="#cdd9ff";x.fill()});for(let i=0;i<9;i++){x.fillStyle=i%2?"#15345b":"#1a4468";x.fillRect(i*W/9,H-48,W/9-2,48);x.fillStyle="#ffd45b";x.font="11px system-ui";x.textAlign="center";x.fillText(`${mult[i]}x`,(i+.5)*W/9,H-20)}x.beginPath();x.arc(ball.x,ball.y,ball.r,0,Math.PI*2);x.fillStyle="#fff";x.fill();arcadeRAF=requestAnimationFrame(loop)}arcadeEngine={cleanup:()=>{c.onpointerdown=c.onpointermove=null;document.getElementById("arcadeControls").innerHTML="";document.getElementById("arcadeHint").textContent=""}};arcadeRAF=requestAnimationFrame(loop)
+}
+
+
+function gameBowling(ch){
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.throws||10);let score=0,throws=0,phase=0,last=0,busy=false;
+ setupCountdown(ch.duration_ms||50000,()=>finishArcade(score,{throws}));arcadeHud(0,'50s',`${total} bolas`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="bowlThrow">LANÇAR</button>';document.getElementById('arcadeHint').textContent='A mira vai de um lado ao outro. Lance quando estiver no centro.';
+ const btn=document.getElementById('bowlThrow');btn.onclick=()=>{if(busy||throws>=total)return;busy=true;throws++;const aim=(Math.sin(phase)+1)/2,dist=Math.abs(aim-.5)*2,pins=Math.max(0,10-Math.round(dist*12));score+=pins;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-throws} bolas`;setTimeout(()=>{busy=false;if(throws>=total)finishArcade(score,{throws})},500)};
+ function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;phase+=.055*dt;x.fillStyle='#3a2016';x.fillRect(0,0,W,H);x.fillStyle='#c98b56';x.fillRect(55,20,W-110,H-40);for(let i=0;i<6;i++){x.fillStyle=i%2?'#d6a873':'#e8bc85';x.fillRect(55+i*(W-110)/6,20,2,H-40)}const pins=[[180,85],[165,105],[195,105],[150,127],[180,127],[210,127],[135,151],[165,151],[195,151],[225,151]];for(const p of pins){x.beginPath();x.arc(p[0],p[1],7,0,Math.PI*2);x.fillStyle='#fff';x.fill();x.fillStyle='#d33';x.fillRect(p[0]-6,p[1]-2,12,3)}const ax=75+((Math.sin(phase)+1)/2)*(W-150);x.strokeStyle='#8fff47';x.lineWidth=3;x.beginPath();x.moveTo(W/2,H-70);x.lineTo(ax,170);x.stroke();x.beginPath();x.arc(W/2,H-70,15,0,Math.PI*2);x.fillStyle='#20262f';x.fill();arcadeRAF=requestAnimationFrame(loop)}
+ arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
+}
+
+function gameGolf(ch){
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.shots||10);let score=0,shots=0,phase=0,last=0,busy=false;
+ setupCountdown(ch.duration_ms||50000,()=>finishArcade(score,{shots}));arcadeHud(0,'50s',`${total} tacadas`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="golfHit">BATER</button>';document.getElementById('arcadeHint').textContent='A linha de mira oscila. Bata quando ela estiver alinhada ao buraco.';
+ document.getElementById('golfHit').onclick=()=>{if(busy||shots>=total)return;busy=true;shots++;const err=Math.abs(Math.sin(phase))*100;const pts=err<12?10:err<28?8:err<48?6:err<70?4:2;score+=pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-shots} tacadas`;setTimeout(()=>{busy=false;if(shots>=total)finishArcade(score,{shots})},420)};
+ function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;phase+=.045*dt;x.fillStyle='#147344';x.fillRect(0,0,W,H);x.fillStyle='#1a8a52';x.beginPath();x.ellipse(W/2,125,115,65,0,0,Math.PI*2);x.fill();x.beginPath();x.arc(W/2,112,11,0,Math.PI*2);x.fillStyle='#111';x.fill();x.fillStyle='#fff';x.fillRect(W/2+4,55,3,58);x.fillStyle='#ff4d4d';x.beginPath();x.moveTo(W/2+7,55);x.lineTo(W/2+43,67);x.lineTo(W/2+7,78);x.fill();const angle=Math.sin(phase)*.42,dx=Math.sin(angle)*260,dy=-Math.cos(angle)*260;x.strokeStyle='#fff9';x.setLineDash([8,6]);x.beginPath();x.moveTo(W/2,H-80);x.lineTo(W/2+dx,H-80+dy);x.stroke();x.setLineDash([]);x.beginPath();x.arc(W/2,H-80,10,0,Math.PI*2);x.fillStyle='#fff';x.fill();arcadeRAF=requestAnimationFrame(loop)}
+ arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
+}
+
+function gameArchery(ch){
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.arrows||10);let score=0,shots=0,t=0,last=0;
+ setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{shots}));arcadeHud(0,'45s',`${total} flechas`);document.getElementById('arcadeHint').textContent='Toque na tela para disparar quando a mira estiver no centro.';
+ c.onpointerdown=e=>{if(shots>=total)return;e.preventDefault();const cx=W/2,cy=235,mx=cx+Math.sin(t)*115,my=cy+Math.sin(t*1.73)*90,d=Math.hypot(mx-cx,my-cy);const pts=d<20?10:d<45?8:d<70?6:d<100?4:2;score+=pts;shots++;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-shots} flechas`;if(shots>=total)setTimeout(()=>finishArcade(score,{shots}),200)};
+ function loop(ts){if(!arcadeRunning)return;const dt=Math.min(2,(ts-last||16)/16);last=ts;t+=.045*dt;x.fillStyle='#10151d';x.fillRect(0,0,W,H);const cx=W/2,cy=235;for(const [r,col] of [[145,'#e8e2c9'],[115,'#20252d'],[85,'#236ab2'],[58,'#d83d4c'],[30,'#ffd83e']]){x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.fillStyle=col;x.fill()}const mx=cx+Math.sin(t)*115,my=cy+Math.sin(t*1.73)*90;x.strokeStyle='#8fff47';x.lineWidth=2;x.beginPath();x.arc(mx,my,15,0,Math.PI*2);x.moveTo(mx-22,my);x.lineTo(mx+22,my);x.moveTo(mx,my-22);x.lineTo(mx,my+22);x.stroke();arcadeRAF=requestAnimationFrame(loop)}
+ arcadeEngine={cleanup:()=>{c.onpointerdown=null;document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
+}
+
+function gameGoalkeeper(ch){
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.shots||10);let score=0,shot=0,zone=-1,open=false,timer=null;const zones=[{x:75,y:150},{x:180,y:145},{x:285,y:150},{x:100,y:255},{x:260,y:255}];
+ setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{shots:shot}));arcadeHud(0,'45s',`${total} cobranças`);document.getElementById('arcadeHint').textContent='Quando a bola aparecer, toque rapidamente no mesmo setor.';
+ function next(){if(shot>=total)return finishArcade(score,{shots:shot});zone=Math.floor(Math.random()*5);open=true;shot++;document.getElementById('arcadeMeta').textContent=`${total-shot} cobranças`;draw();clearTimeout(timer);timer=setTimeout(()=>{open=false;setTimeout(next,320)},850)}
+ c.onpointerdown=e=>{if(!open)return;e.preventDefault();const p=canvasPoint(e);let best=0,bd=1e9;zones.forEach((z,i)=>{const d=Math.hypot(z.x-p.x,z.y-p.y);if(d<bd){bd=d;best=i}});if(best===zone){score++;document.getElementById('arcadeScore').textContent=score}open=false;clearTimeout(timer);draw();setTimeout(next,300)};
+ function draw(){x.fillStyle='#0d5e32';x.fillRect(0,0,W,H);x.strokeStyle='#fff';x.lineWidth=5;x.strokeRect(35,70,W-70,245);zones.forEach((z,i)=>{x.beginPath();x.arc(z.x,z.y,38,0,Math.PI*2);x.fillStyle=i===zone&&open?'#ffffff25':'#00000018';x.fill();x.strokeStyle='#ffffff22';x.stroke()});x.fillStyle='#ffd83d';x.fillRect(W/2-35,275,70,16);if(open){x.beginPath();x.arc(zones[zone].x,zones[zone].y,11,0,Math.PI*2);x.fillStyle='#fff';x.fill()}}
+ draw();setTimeout(next,500);arcadeEngine={cleanup:()=>{clearTimeout(timer);c.onpointerdown=null;document.getElementById('arcadeHint').textContent=''}}
+}
+
+function gameSkeeBall(ch){
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.balls||10);let score=0,balls=0,phase=0,last=0;
+ setupCountdown(ch.duration_ms||50000,()=>finishArcade(score,{balls}));arcadeHud(0,'50s',`${total} bolas`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="skeeThrow">LANÇAR</button>';document.getElementById('arcadeHint').textContent='A força sobe e desce. Lance perto da marca verde.';
+ document.getElementById('skeeThrow').onclick=()=>{if(balls>=total)return;balls++;const v=(Math.sin(phase)+1)/2,err=Math.abs(v-.72);const pts=err<.06?50:err<.13?40:err<.22?30:err<.32?20:10;score+=pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-balls} bolas`;if(balls>=total)setTimeout(()=>finishArcade(score,{balls}),220)};
+ function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;phase+=.065*dt;const v=(Math.sin(phase)+1)/2;x.fillStyle='#4b2915';x.fillRect(0,0,W,H);x.fillStyle='#c27639';x.beginPath();x.moveTo(55,H-20);x.lineTo(130,190);x.lineTo(230,190);x.lineTo(W-55,H-20);x.fill();for(const [yy,r,pts] of [[125,38,50],[185,50,40],[250,64,30]]){x.beginPath();x.arc(W/2,yy,r,0,Math.PI*2);x.fillStyle='#17191e';x.fill();x.fillStyle='#fff';x.font='bold 14px system-ui';x.textAlign='center';x.fillText(String(pts),W/2,yy+5)}x.fillStyle='#17202a';x.fillRect(45,H-72,W-90,18);x.fillStyle='#8fff47';x.fillRect(45+(W-90)*.68,H-72,(W-90)*.08,18);x.fillStyle='#fff';x.fillRect(45+(W-90)*v-3,H-78,6,30);arcadeRAF=requestAnimationFrame(loop)}arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
+}
+
+function gameDiscTarget(ch){
+ const c=AC(),x=AX(),W=c.width,H=c.height,total=Number(ch.throws||10);let score=0,throws=0,phase=0,last=0;
+ setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{throws}));arcadeHud(0,'45s',`${total} discos`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="discThrow">LANÇAR DISCO</button>';document.getElementById('arcadeHint').textContent='O alvo se move. Lance quando ele cruzar a linha central.';
+ document.getElementById('discThrow').onclick=()=>{if(throws>=total)return;throws++;const tx=W/2+Math.sin(phase)*120,err=Math.abs(tx-W/2);const pts=err<20?30:err<55?20:err<95?10:0;score+=pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${total-throws} discos`;if(throws>=total)setTimeout(()=>finishArcade(score,{throws}),200)};
+ function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;phase+=.05*dt;const tx=W/2+Math.sin(phase)*120,ty=175+Math.sin(phase*.7)*38;x.fillStyle='#13233f';x.fillRect(0,0,W,H);x.strokeStyle='#ffffff22';x.beginPath();x.moveTo(W/2,0);x.lineTo(W/2,H);x.stroke();for(const [r,col] of [[55,'#f2f2e8'],[38,'#e84747'],[20,'#ffd83d']]){x.beginPath();x.arc(tx,ty,r,0,Math.PI*2);x.fillStyle=col;x.fill()}x.beginPath();x.ellipse(W/2,H-80,34,10,0,0,Math.PI*2);x.fillStyle='#8ec9ff';x.fill();arcadeRAF=requestAnimationFrame(loop)}arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gamePool(ch){
@@ -1930,6 +1982,22 @@ function gamePool(ch){
     [H*.25,H*.5,H*.75].forEach(yy=>{x.save();x.translate(17,yy);x.rotate(Math.PI/4);x.fillRect(-2.5,-2.5,5,5);x.restore();x.save();x.translate(W-17,yy);x.rotate(Math.PI/4);x.fillRect(-2.5,-2.5,5,5);x.restore()});
   }
 
+  function bestPocketForBall(ball,dirX,dirY){
+    let best=null;
+    for(const p of pockets){
+      const px=p.x-ball.x,py=p.y-ball.y,plen=Math.hypot(px,py)||1;
+      const ux=px/plen,uy=py/plen;
+      const align=ux*dirX+uy*dirY;
+      if(align<0.18)continue;
+      const anglePenalty=(1-align)*280;
+      const score=plen+anglePenalty;
+      if(!best||score<best.score)best={p,score,align};
+    }
+    if(best)return best;
+    for(const p of pockets){const d=Math.hypot(p.x-ball.x,p.y-ball.y);if(!best||d<best.score)best={p,score:d,align:0};}
+    return best;
+  }
+
   function drawAim(){
     if(!aim||!aimPoint||!cue.on)return;
     const dx=cue.x-aimPoint.x,dy=cue.y-aimPoint.y,d=Math.hypot(dx,dy);
@@ -1939,32 +2007,35 @@ function gamePool(ch){
     const endDist=hit?hit.dist:360;
 
     x.save();
-    x.strokeStyle="#ffffffb8";x.lineWidth=1.6;x.setLineDash([8,6]);
+    x.strokeStyle="#ffffffd0";x.lineWidth=1.8;x.setLineDash([8,6]);
     x.beginPath();x.moveTo(cue.x+nx*12,cue.y+ny*12);x.lineTo(cue.x+nx*endDist,cue.y+ny*endDist);x.stroke();
     x.setLineDash([]);
 
     if(hit){
       const gx=cue.x+nx*hit.dist,gy=cue.y+ny*hit.dist;
-      x.beginPath();x.arc(gx,gy,cue.r,0,Math.PI*2);x.strokeStyle="#d7ff9d";x.lineWidth=1.5;x.stroke();
+      x.beginPath();x.arc(gx,gy,cue.r,0,Math.PI*2);x.strokeStyle="#d7ff9d";x.lineWidth=1.7;x.stroke();
+
+      const obj=hit.ball;
+      const odx=obj.x-gx,ody=obj.y-gy,olen=Math.hypot(odx,ody)||1;
+      const onx=odx/olen,ony=ody/olen;
+      const pocket=bestPocketForBall(obj,onx,ony);
+      if(pocket){
+        x.strokeStyle=pocket.align>.45?"#8fff47dd":"#ffd15caa";x.lineWidth=2.1;x.setLineDash([9,5]);
+        x.beginPath();x.moveTo(obj.x+onx*(obj.r+3),obj.y+ony*(obj.r+3));x.lineTo(pocket.p.x,pocket.p.y);x.stroke();x.setLineDash([]);
+        x.beginPath();x.arc(pocket.p.x,pocket.p.y,pocketR+6,0,Math.PI*2);x.strokeStyle=pocket.align>.45?"#8fff47":"#ffd15c";x.lineWidth=2;x.stroke();
+        x.fillStyle="#0b120dcc";x.fillRect(Math.max(8,obj.x-34),Math.max(8,obj.y-35),68,20);
+        x.fillStyle="#dfffd0";x.font="bold 10px system-ui";x.textAlign="center";x.textBaseline="middle";x.fillText(`Bola ${obj.n}`,obj.x,Math.max(18,obj.y-25));
+      }
     }
 
     const pull=Math.min(105,d);
     x.strokeStyle="#d8b477";x.lineWidth=6;x.lineCap="round";
-    x.beginPath();
-    x.moveTo(cue.x-nx*(18+pull*.25),cue.y-ny*(18+pull*.25));
-    x.lineTo(cue.x-nx*(125+pull*.55),cue.y-ny*(125+pull*.55));
-    x.stroke();
-    x.strokeStyle="#2a1a0d";x.lineWidth=2;
-    x.beginPath();
-    x.moveTo(cue.x-nx*(110+pull*.55),cue.y-ny*(110+pull*.55));
-    x.lineTo(cue.x-nx*(145+pull*.55),cue.y-ny*(145+pull*.55));
-    x.stroke();
+    x.beginPath();x.moveTo(cue.x-nx*(18+pull*.25),cue.y-ny*(18+pull*.25));x.lineTo(cue.x-nx*(125+pull*.55),cue.y-ny*(125+pull*.55));x.stroke();
+    x.strokeStyle="#2a1a0d";x.lineWidth=2;x.beginPath();x.moveTo(cue.x-nx*(110+pull*.55),cue.y-ny*(110+pull*.55));x.lineTo(cue.x-nx*(145+pull*.55),cue.y-ny*(145+pull*.55));x.stroke();
 
-    // Power meter
     x.fillStyle="#10171bcc";x.fillRect(55,H-24,W-110,10);
     const grad=x.createLinearGradient(55,0,W-55,0);grad.addColorStop(0,"#74e66b");grad.addColorStop(.65,"#ffd84c");grad.addColorStop(1,"#ff5b5b");
-    x.fillStyle=grad;x.fillRect(55,H-24,(W-110)*shotPower,10);
-    x.strokeStyle="#ffffff44";x.strokeRect(55,H-24,W-110,10);
+    x.fillStyle=grad;x.fillRect(55,H-24,(W-110)*shotPower,10);x.strokeStyle="#ffffff44";x.strokeRect(55,H-24,W-110,10);
     x.restore();
   }
 
@@ -2002,7 +2073,7 @@ function gamePool(ch){
 
 
 document.getElementById("arcadeStart").onclick=startArcade;document.getElementById("arcadeBack").onclick=closeArcade;document.getElementById("arcadeLobbyBtn").onclick=()=>{document.getElementById("arcadeModal").classList.remove("open");loadCasino().catch(()=>{})};document.getElementById("arcadeAgainBtn").onclick=()=>openArcadeGame(arcadeGame);
-document.querySelectorAll('[data-arena-mode]').forEach(b=>b.onclick=()=>setArenaMode(b.dataset.arenaMode));document.querySelectorAll('[data-arena-diff]').forEach(b=>b.onclick=()=>setArenaDifficulty(b.dataset.arenaDiff));document.getElementById('arenaJoinBtn').onclick=joinArena;document.getElementById('arenaCancelBtn').onclick=cancelArena;
+document.querySelectorAll('[data-arena-mode]').forEach(b=>b.onclick=()=>setArenaMode(b.dataset.arenaMode));document.getElementById('arenaJoinBtn').onclick=joinArena;document.getElementById('arenaCancelBtn').onclick=cancelArena;
 
 document.querySelectorAll("[data-casino-filter]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-casino-filter]").forEach(x=>x.classList.remove("active"));
