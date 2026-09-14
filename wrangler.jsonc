@@ -2,5 +2,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "betpllay",
   "compatibility_date": "2026-09-12",
-  "assets": {"directory": ".", "not_found_handling": "single-page-application"}
+  "assets": {
+    "directory": ".",
+    "not_found_handling": "single-page-application"
+  }
 }

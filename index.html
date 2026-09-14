@@ -1669,9 +1669,91 @@ function gameDarts(ch){
 }
 
 function gameBasket(ch){
- const c=AC(),x=AX(),W=c.width,H=c.height;let score=0,shots=0,last=0,phase=0;const maxShots=Number(ch.shots||15);setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{shots}));arcadeHud(0,'45s',`${maxShots} arremessos`);document.getElementById('arcadeControls').innerHTML='<button class="go" id="basketShoot">ARREMESSAR</button>';document.getElementById('arcadeHint').textContent='A cesta se move. Arremesse quando estiver alinhada com a bola.';let hoopX=W/2;
- document.getElementById('basketShoot').onclick=()=>{if(shots>=maxShots)return;shots++;const diff=Math.abs(hoopX-W/2),pts=diff<20?3:diff<48?2:0;score+=pts;document.getElementById('arcadeScore').textContent=score;document.getElementById('arcadeMeta').textContent=`${maxShots-shots} arremessos`;if(shots>=maxShots)setTimeout(()=>finishArcade(score,{shots}),300)};
- function loop(t){if(!arcadeRunning)return;const dt=Math.min(2,(t-last||16)/16);last=t;phase+=.035*dt;hoopX=W/2+Math.sin(phase)*120;x.fillStyle='#16121a';x.fillRect(0,0,W,H);x.fillStyle='#3b4758';x.fillRect(hoopX+45,90,8,105);x.strokeStyle='#ff762d';x.lineWidth=6;x.beginPath();x.ellipse(hoopX,190,46,13,0,0,Math.PI*2);x.stroke();x.strokeStyle='#ffffff55';x.lineWidth=1;for(let i=-35;i<=35;i+=14){x.beginPath();x.moveTo(hoopX+i,196);x.lineTo(hoopX+i*.5,252);x.stroke()}x.beginPath();x.arc(W/2,H-85,28,0,Math.PI*2);x.fillStyle='#ef7d24';x.fill();x.strokeStyle='#35170a';x.lineWidth=3;x.stroke();x.setLineDash([5,5]);x.strokeStyle='#8fff47aa';x.beginPath();x.moveTo(W/2,H-115);x.lineTo(hoopX,205);x.stroke();x.setLineDash([]);arcadeRAF=requestAnimationFrame(loop)}arcadeEngine={cleanup:()=>{document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};arcadeRAF=requestAnimationFrame(loop)
+ const c=AC(),x=AX(),W=c.width,H=c.height;
+ let score=0,shots=0,last=0,phase=0,hoopX=W/2,shotAnim=null,busy=false;
+ const maxShots=Number(ch.shots||15);
+ setupCountdown(ch.duration_ms||45000,()=>finishArcade(score,{shots}));
+ arcadeHud(0,'45s',`${maxShots} arremessos`);
+ document.getElementById('arcadeControls').innerHTML='<button class="go" id="basketShoot">ARREMESSAR</button>';
+ document.getElementById('arcadeHint').textContent='A cesta se move. Arremesse quando estiver alinhada com a bola.';
+ const shootBtn=document.getElementById('basketShoot');
+
+ function startShot(){
+   if(busy||shots>=maxShots)return;
+   busy=true;shootBtn.disabled=true;shots++;
+   const hoopAtShot=hoopX;
+   const diff=Math.abs(hoopAtShot-W/2);
+   const pts=diff<20?3:diff<48?2:0;
+   const missDir=(hoopAtShot>=W/2?-1:1);
+   shotAnim={
+     start:performance.now(),duration:760,
+     sx:W/2,sy:H-85,
+     ex:pts>0?hoopAtShot:W/2+missDir*(55+Math.min(55,diff*.35)),
+     ey:pts>0?202:235,
+     hoopX:hoopAtShot,pts
+   };
+   document.getElementById('arcadeMeta').textContent=`${Math.max(0,maxShots-shots)} arremessos`;
+   document.getElementById('arcadeHint').textContent='Bola no ar...';
+ }
+ shootBtn.onclick=startShot;
+
+ function finishShot(a){
+   if(!a)return;
+   score+=a.pts;
+   document.getElementById('arcadeScore').textContent=score;
+   document.getElementById('arcadeHint').textContent=a.pts>0?`Cesta! +${a.pts} ponto${a.pts>1?'s':''}`:'Errou. Tente alinhar melhor com a cesta.';
+   shotAnim=null;busy=false;shootBtn.disabled=false;
+   if(shots>=maxShots)setTimeout(()=>finishArcade(score,{shots}),380);
+ }
+
+ function drawHoop(hx){
+   x.fillStyle='#3b4758';x.fillRect(hx+45,90,8,105);
+   x.strokeStyle='#ff762d';x.lineWidth=6;x.beginPath();x.ellipse(hx,190,46,13,0,0,Math.PI*2);x.stroke();
+   x.strokeStyle='#ffffff55';x.lineWidth=1;
+   for(let i=-35;i<=35;i+=14){x.beginPath();x.moveTo(hx+i,196);x.lineTo(hx+i*.5,252);x.stroke()}
+ }
+ function drawBall(bx,by,r=28,alpha=1){
+   x.save();x.globalAlpha=alpha;x.translate(bx,by);
+   x.beginPath();x.arc(0,0,r,0,Math.PI*2);x.fillStyle='#ef7d24';x.fill();x.strokeStyle='#35170a';x.lineWidth=Math.max(1.5,r*.1);x.stroke();
+   x.strokeStyle='#35170acc';x.lineWidth=Math.max(1,r*.07);
+   x.beginPath();x.arc(0,0,r*.72,-1.1,1.1);x.stroke();
+   x.beginPath();x.arc(0,0,r*.72,2.04,4.24);x.stroke();
+   x.beginPath();x.moveTo(-r,0);x.quadraticCurveTo(0,r*.34,r,0);x.stroke();
+   x.restore();
+ }
+
+ function loop(t){
+   if(!arcadeRunning)return;
+   const dt=Math.min(2,(t-last||16)/16);last=t;
+   if(!busy){phase+=.035*dt;hoopX=W/2+Math.sin(phase)*120;}
+   else if(shotAnim){hoopX=shotAnim.hoopX;}
+
+   x.fillStyle='#16121a';x.fillRect(0,0,W,H);
+   // backboard / court accents
+   x.fillStyle='#242132';x.fillRect(0,H-42,W,42);
+   x.strokeStyle='#ffffff13';x.lineWidth=2;x.beginPath();x.arc(W/2,H-50,88,Math.PI,Math.PI*2);x.stroke();
+   drawHoop(hoopX);
+
+   if(shotAnim){
+     const raw=Math.min(1,(t-shotAnim.start)/shotAnim.duration);
+     const ease=raw<.5?2*raw*raw:1-Math.pow(-2*raw+2,2)/2;
+     const bx=shotAnim.sx+(shotAnim.ex-shotAnim.sx)*ease;
+     const baseY=shotAnim.sy+(shotAnim.ey-shotAnim.sy)*ease;
+     const arc=-185*4*ease*(1-ease);
+     const by=baseY+arc;
+     const r=28-(raw*5);
+     drawBall(bx,by,r,1);
+     // shadow grows/shrinks with flight
+     x.save();x.globalAlpha=.20+.18*raw;x.beginPath();x.ellipse(bx,H-56,26*(1-raw*.35),7*(1-raw*.25),0,0,Math.PI*2);x.fillStyle='#000';x.fill();x.restore();
+     if(raw>=1)finishShot(shotAnim);
+   }else{
+     drawBall(W/2,H-85,28,1);
+     x.setLineDash([5,5]);x.strokeStyle='#8fff47aa';x.lineWidth=2;x.beginPath();x.moveTo(W/2,H-115);x.lineTo(hoopX,205);x.stroke();x.setLineDash([]);
+   }
+   arcadeRAF=requestAnimationFrame(loop)
+ }
+ arcadeEngine={cleanup:()=>{shootBtn.onclick=null;document.getElementById('arcadeControls').innerHTML='';document.getElementById('arcadeHint').textContent=''}};
+ arcadeRAF=requestAnimationFrame(loop)
 }
 
 function gameMemory(ch){
@@ -1875,6 +1957,7 @@ function gamePool(ch){
   c.onpointerdown=pointerDown;c.onpointermove=pointerMove;c.onpointerup=pointerUp;c.onpointercancel=()=>{aim=false;shotPower=0};
 
   function pocketBall(b){
+    if(!b.on)return;
     b.on=false;b.vx=b.vy=0;
     if(b.cue){
       scratches++;
@@ -1886,10 +1969,34 @@ function gamePool(ch){
     }
   }
 
+  function handlePocketMouthOrEscape(b){
+    // Caçapas laterais: se a bola cruza a boca, ela deve cair ou voltar, nunca sumir fora da mesa.
+    const sideMouth=Math.abs(b.y-H/2)<pocketR*1.12;
+    if(sideMouth && (b.x<rail-b.r*.15 || b.x>W-rail+b.r*.15)){
+      pocketBall(b);return true;
+    }
+    // Cantos: cruzou a região aberta do canto = bola encaçapada.
+    const topCorner=b.y<rail+b.r*.15 && (b.x<rail+pocketR*.86 || b.x>W-rail-pocketR*.86);
+    const bottomCorner=b.y>H-rail-b.r*.15 && (b.x<rail+pocketR*.86 || b.x>W-rail-pocketR*.86);
+    if(topCorner||bottomCorner){pocketBall(b);return true;}
+
+    // Rede de segurança: nenhuma bola pode ficar invisível fora dos limites.
+    if(b.x<-b.r*2 || b.x>W+b.r*2 || b.y<-b.r*2 || b.y>H+b.r*2){
+      if(b.cue){pocketBall(b);return true;}
+      // Bola numerada que escapou pela geometria volta para dentro sem gerar ponto.
+      b.x=Math.max(rail+b.r,Math.min(W-rail-b.r,b.x));
+      b.y=Math.max(rail+b.r,Math.min(H-rail-b.r,b.y));
+      b.vx*=-.65;b.vy*=-.65;
+    }
+    return false;
+  }
+
   function stepPhysics(dt){
     const active=balls.filter(b=>b.on);
     for(const b of active){
       b.x+=b.vx*dt;b.y+=b.vy*dt;
+
+      if(handlePocketMouthOrEscape(b))continue;
 
       let sunk=false;
       for(const p of pockets){
@@ -1900,7 +2007,7 @@ function gamePool(ch){
       if(sunk)continue;
 
       const left=rail+b.r,right=W-rail-b.r,top=rail+b.r,bottom=H-rail-b.r;
-      const nearMid=Math.abs(b.y-H/2)<pocketR*1.05;
+      const nearMid=Math.abs(b.y-H/2)<pocketR*.88;
       const nearTopCorner=b.y<rail+pocketR*1.15;
       const nearBottomCorner=b.y>H-rail-pocketR*1.15;
 
@@ -2047,7 +2154,7 @@ function gamePool(ch){
 
     if(waiting&&!moving()){
       waiting=false;
-      if(cueNeedsRespawn)respawnCue();
+      if(cueNeedsRespawn || !cue.on || cue.x<0 || cue.x>W || cue.y<0 || cue.y>H)respawnCue();
       if(score>=15||shots>=maxShots)return finishArcade(score,{shots,scratches});
       document.getElementById("arcadeHint").textContent="Bolas paradas. Toque na branca e arraste para trás.";
     }
