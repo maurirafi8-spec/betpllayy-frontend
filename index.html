@@ -16,7 +16,16 @@ button,select{font:inherit}.app{max-width:720px;margin:auto;padding:18px 14px 10
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:11px}.stat small{color:var(--muted);display:block;font-size:10px;text-transform:uppercase}.stat b{font-size:20px;display:block;margin-top:3px}
 .sectionTitle{display:flex;justify-content:space-between;align-items:end;margin:22px 1px 10px}.sectionTitle h2{font-size:19px;margin:0}.sectionTitle span{font-size:12px;color:var(--muted)}
 .list{display:grid;gap:11px}.pick{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;position:relative;overflow:hidden}.pick:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green)}.pickTop{display:flex;justify-content:space-between;gap:12px}.league{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:800}.teams{font-size:16px;font-weight:900;margin-top:3px}.score{min-width:58px;text-align:center;background:#0e2b1b;border:1px solid #2c6a44;border-radius:12px;padding:7px}.score b{display:block;color:var(--green);font-size:18px}.selection{margin:11px 0 8px;font-size:18px;font-weight:1000}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.metric{background:#0a1310;border:1px solid #1e3028;border-radius:11px;padding:8px}.metric small{display:block;color:var(--muted);font-size:10px}.metric b{font-size:14px}.edge{color:var(--green)}.book{color:var(--amber)}.risk{display:inline-block;margin-top:9px;padding:5px 9px;border-radius:999px;background:#19231e;border:1px solid var(--line);font-size:11px;font-weight:900;text-transform:uppercase}.risk.segura{color:var(--green)}.risk.moderada{color:var(--amber)}.risk.agressiva{color:var(--red)}
-.alt{margin-top:9px;color:var(--muted);font-size:11px;line-height:1.45}.empty{padding:30px 18px;text-align:center;background:var(--panel);border:1px dashed var(--line);border-radius:18px;color:var(--muted)}
+.alt{margin-top:9px;color:var(--muted);font-size:11px;line-height:1.45}
+.statsDetail{margin-top:10px;border-top:1px solid var(--line);padding-top:9px}
+.statsDetail summary{cursor:pointer;color:#b9c9c1;font-size:12px;font-weight:900}
+.statsTeams{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+.teamStat{background:#09120f;border:1px solid #1e3028;border-radius:11px;padding:9px}
+.teamStat strong{display:block;font-size:12px;margin-bottom:5px}
+.teamStat span{display:block;color:var(--muted);font-size:11px;line-height:1.55}
+.modelTag{display:inline-flex;gap:5px;align-items:center;margin-left:6px;color:#7dc8ff;font-size:10px;font-weight:900}
+.statsStatus{margin-top:10px;font-size:11px;color:var(--muted)}
+.empty{padding:30px 18px;text-align:center;background:var(--panel);border:1px dashed var(--line);border-radius:18px;color:var(--muted)}
 .tabs{position:fixed;bottom:0;left:0;right:0;background:#0b1310ee;border-top:1px solid var(--line);backdrop-filter:blur(12px);z-index:10}.tabsInner{max-width:720px;margin:auto;display:grid;grid-template-columns:repeat(3,1fr)}.tab{background:none;border:0;color:var(--muted);padding:12px 5px 15px;font-weight:850}.tab.active{color:var(--green)}
 .panel{display:none}.panel.active{display:block}.performance{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.perfCard{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px}.perfCard span{color:var(--muted);font-size:12px}.perfCard b{display:block;font-size:25px;margin-top:4px}.won{color:var(--green)}.lost{color:var(--red)}.pending{color:var(--amber)}
 .history{margin-top:14px;display:grid;gap:7px}.hist{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:10px}.histTop{display:flex;justify-content:space-between;gap:8px}.hist small{color:var(--muted)}.notice{margin-top:14px;padding:12px;border:1px solid #4f4423;background:#211d10;color:#e9d690;border-radius:14px;font-size:12px;line-height:1.5}.settings{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px}.row{margin-bottom:14px}.row label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
@@ -27,14 +36,14 @@ button,select{font:inherit}.app{max-width:720px;margin:auto;padding:18px 14px 10
 <body>
 <main class="app">
   <div class="top">
-    <div><div class="brand">BETPLLAYY <span>ANALYST</span></div><div class="muted tiny">Inteligência de mercado</div></div>
-    <div class="badge">V9.0</div>
+    <div><div class="brand">BETPLLAYY <span>ANALYST PRO</span></div><div class="muted tiny">Inteligência de mercado</div></div>
+    <div class="badge">V9.1</div>
   </div>
 
   <section id="bestPanel" class="panel active">
     <div class="hero">
       <h1>Encontre a <b>melhor entrada</b>, não só o favorito.</h1>
-      <p>Comparamos as odds entre casas, retiramos a margem e procuramos preços acima da odd justa do mercado.</p>
+      <p>Comparamos odds entre casas e, nas melhores oportunidades de futebol, cruzamos forma, gols, chutes, escanteios, cartões e confrontos.</p>
       <div class="controls">
         <select id="scope" class="select">
           <option value="football">⚽ Futebol — todas as ligas</option>
@@ -63,6 +72,7 @@ button,select{font:inherit}.app{max-width:720px;margin:auto;padding:18px 14px 10
       <div class="stat"><small>Horizonte</small><b id="horizon">48h</b></div>
       <div class="stat"><small>Casas mín.</small><b id="books">3</b></div>
     </div>
+    <div id="statsStatus" class="statsStatus">Camada estatística: verificando...</div>
 
     <div class="sectionTitle"><h2>🔥 Melhores oportunidades</h2><span id="updated">Aguardando análise</span></div>
     <div id="picks" class="list"><div class="empty">Toque em <b>Analisar agora</b> para comparar as casas.</div></div>
@@ -84,7 +94,7 @@ button,select{font:inherit}.app{max-width:720px;margin:auto;padding:18px 14px 10
   <section id="settingsPanel" class="panel">
     <div class="sectionTitle"><h2>⚙️ Como funciona</h2></div>
     <div class="settings">
-      <div class="row"><label>Método</label><b>Consenso de casas + de-vig</b><div class="muted tiny">Convertemos odds em probabilidades e retiramos a margem de cada mercado.</div></div>
+      <div class="row"><label>Método</label><b>Consenso de casas + estatísticas recentes</b><div class="muted tiny">O mercado é a base. Para futebol, acrescentamos forma, gols, chutes no gol, escanteios, cartões e H2H quando disponíveis.</div></div>
       <div class="row"><label>Edge / valor</label><b>Probabilidade justa × melhor odd − 1</b><div class="muted tiny">Ex.: 60% a odd 1,80 gera valor estimado de +8%.</div></div>
       <div class="row"><label>Nota 0–100</label><b>Valor + estabilidade + número de casas</b><div class="muted tiny">A nota não é a probabilidade de ganhar.</div></div>
       <button id="refreshPerf" class="btn secondary wide">ATUALIZAR DESEMPENHO</button>
@@ -117,22 +127,52 @@ const odd=v=>Number(v||0).toFixed(2);
 const dt=v=>new Date(v).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
 
 function riskLabel(r){return {segura:"Mais conservadora",moderada:"Moderada",agressiva:"Mais agressiva"}[r]||r}
+
+const nfmt=(v,d=1)=>Number.isFinite(Number(v))?Number(v).toFixed(d):"—";
+function teamStatsHtml(name,s){
+  if(!s)return "";
+  return `<div class="teamStat"><strong>${name} • forma ${s.form||"—"}</strong>
+    <span>Gols: ${nfmt(s.goals_for)} feitos / ${nfmt(s.goals_against)} sofridos</span>
+    <span>Chutes no gol: ${nfmt(s.shots_on_goal)} • Escanteios: ${nfmt(s.corners)}</span>
+    <span>Cartões amarelos: ${nfmt(s.yellow_cards)} • Posse: ${nfmt(s.possession)}%</span>
+  </div>`
+}
+function statsDetails(p){
+  const s=p.stats;if(!p.stats_available||!s)return "";
+  const h=s.h2h||{},x=s.model?.expected_goals;
+  return `<details class="statsDetail">
+    <summary>📊 Ver estatísticas usadas na análise</summary>
+    <div class="statsTeams">
+      ${teamStatsHtml(p.home_team,s.home)}
+      ${teamStatsHtml(p.away_team,s.away)}
+    </div>
+    <div class="alt">${x?`Modelo de gols: ${x.home} × ${x.away} (total ${x.total}) • `:""}H2H: ${h.matches||0} jogos, média ${nfmt(h.avg_goals)} gols.</div>
+  </details>`
+}
+
 function pickCard(p){
   const alts=(p.alternatives||[]).slice(1,4).map(a=>`${a.bookmaker} ${odd(a.odd)}`).join(" • ");
+  const marketP=p.market_probability??p.fair_probability;
+  const statsMetric=p.stats_available&&Number.isFinite(Number(p.stat_probability))
+    ? `<div class="metric"><small>Modelo estatístico</small><b>${pct(p.stat_probability)}</b></div>`
+    : `<div class="metric"><small>Modelo estatístico</small><b class="muted">Sem dados</b></div>`;
   return `<article class="pick">
     <div class="pickTop">
-      <div><div class="league">${p.league} • ${dt(p.commence_time)}</div><div class="teams">${p.home_team} × ${p.away_team}</div></div>
+      <div><div class="league">${p.league} • ${dt(p.commence_time)}</div><div class="teams">${p.home_team} × ${p.away_team}${p.stats_available?'<span class="modelTag">● ODDS + STATS</span>':''}</div></div>
       <div class="score"><small>NOTA</small><b>${p.score}</b></div>
     </div>
     <div class="selection">🎯 ${p.selection_name}</div>
     <div class="grid">
       <div class="metric"><small>Melhor odd</small><b class="book">${odd(p.best_odd)} • ${p.bookmaker}</b></div>
-      <div class="metric"><small>Prob. consenso</small><b>${pct(p.fair_probability)}</b></div>
+      <div class="metric"><small>Mercado sem margem</small><b>${pct(marketP)}</b></div>
+      ${statsMetric}
+      <div class="metric"><small>Prob. combinada</small><b>${pct(p.fair_probability)}</b></div>
       <div class="metric"><small>Odd justa</small><b>${odd(p.fair_odd)}</b></div>
       <div class="metric"><small>Valor estimado</small><b class="edge">+${pct(p.edge)}</b></div>
     </div>
     <span class="risk ${p.risk}">${riskLabel(p.risk)}</span>
     ${alts?`<div class="alt">Outras cotações: ${alts}</div>`:""}
+    ${statsDetails(p)}
   </article>`
 }
 
@@ -145,6 +185,10 @@ async function scan(){
     $("count").textContent=d.count;
     $("horizon").textContent=d.horizon_hours+"h";
     $("updated").textContent="Atualizado agora";
+    const sm=d.stats||{};
+    $("statsStatus").textContent=sm.configured
+      ? `Camada estatística ativa • ${sm.enriched||0} oportunidades enriquecidas nesta análise`
+      : "Camada estatística ainda não configurada no servidor — análise usando somente as odds.";
     $("picks").innerHTML=d.picks.length?d.picks.map(pickCard).join(""):'<div class="empty">Nenhuma entrada passou no filtro de valor agora. Isso é melhor do que forçar um palpite ruim.</div>';
   }catch(e){
     $("picks").innerHTML=`<div class="empty">Falha na análise: ${e.data?.error||e.message}</div>`;
@@ -175,7 +219,7 @@ async function performance(){
     $("pendingCount").textContent=`${p.pending} pendentes`;
     $("history").innerHTML=d.picks.length?d.picks.map(x=>`<div class="hist">
       <div class="histTop"><b>${x.selection_name}</b><b class="${x.status}">${{won:"✅",lost:"❌",pending:"⏳",void:"↩️"}[x.status]||x.status}</b></div>
-      <small>${x.home_team} × ${x.away_team} • ${odd(x.best_odd)} ${x.bookmaker}</small>
+      <small>${x.home_team} × ${x.away_team} • ${odd(x.best_odd)} ${x.bookmaker}${x.stat_probability?" • odds + stats":""}</small>
     </div>`).join(""):'<div class="empty">As recomendações aparecerão aqui depois das primeiras análises.</div>';
   }catch(e){$("history").innerHTML='<div class="empty">Não foi possível carregar o desempenho.</div>'}
 }

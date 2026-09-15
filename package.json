@@ -1,7 +1,7 @@
 {
-  "name": "betpllay-analyst-frontend",
+  "name": "betpllay-analyst-pro-frontend",
   "private": true,
-  "version": "9.0.0",
+  "version": "9.1.0",
   "scripts": {
     "deploy": "wrangler deploy"
   },

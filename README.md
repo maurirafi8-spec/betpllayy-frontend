@@ -1,4 +1,4 @@
-# BetPllayy V9.0 Analyst — Cloudflare
+# BetPllayy V9.1 Analyst Pro — Cloudflare
 
-Substitua os arquivos no repositório `betpllayy-frontend`.
+Substitua os arquivos visíveis no `betpllayy-frontend`.
 Mantenha o `.assetsignore` já existente.
