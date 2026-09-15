@@ -36,8 +36,8 @@ button,select{font:inherit}.app{max-width:720px;margin:auto;padding:18px 14px 10
 <body>
 <main class="app">
   <div class="top">
-    <div><div class="brand">BETPLLAYY <span>ANALYST PRO</span></div><div class="muted tiny">Inteligência de mercado</div></div>
-    <div class="badge">V9.1</div>
+    <div><div class="brand">BETPLLAYY <span>ANALYST CURRENT</span></div><div class="muted tiny">Inteligência de mercado</div></div>
+    <div class="badge">V9.2</div>
   </div>
 
   <section id="bestPanel" class="panel active">
@@ -94,7 +94,7 @@ button,select{font:inherit}.app{max-width:720px;margin:auto;padding:18px 14px 10
   <section id="settingsPanel" class="panel">
     <div class="sectionTitle"><h2>⚙️ Como funciona</h2></div>
     <div class="settings">
-      <div class="row"><label>Método</label><b>Consenso de casas + estatísticas recentes</b><div class="muted tiny">O mercado é a base. Para futebol, acrescentamos forma, gols, chutes no gol, escanteios, cartões e H2H quando disponíveis.</div></div>
+      <div class="row"><label>Método</label><b>Consenso de casas + estatísticas recentes</b><div class="muted tiny">O mercado é a base. Para futebol, usamos primeiro dados da temporada atual; a API-Football histórica só entra como fallback.</div></div>
       <div class="row"><label>Edge / valor</label><b>Probabilidade justa × melhor odd − 1</b><div class="muted tiny">Ex.: 60% a odd 1,80 gera valor estimado de +8%.</div></div>
       <div class="row"><label>Nota 0–100</label><b>Valor + estabilidade + número de casas</b><div class="muted tiny">A nota não é a probabilidade de ganhar.</div></div>
       <button id="refreshPerf" class="btn secondary wide">ATUALIZAR DESEMPENHO</button>
@@ -146,8 +146,18 @@ function statsDetails(p){
       ${teamStatsHtml(p.home_team,s.home)}
       ${teamStatsHtml(p.away_team,s.away)}
     </div>
-    <div class="alt">${x?`Modelo de gols: ${x.home} × ${x.away} (total ${x.total}) • `:""}H2H: ${h.matches||0} jogos, média ${nfmt(h.avg_goals)} gols.</div>
+    <div class="alt">${x?`Modelo de gols: ${x.home} × ${x.away} (total ${x.total}) • `:""}${s.data_mode==="current-season"?"Dados da temporada atual":s.data_mode?.startsWith("historical-")?"Fallback histórico 2024":"Dados estatísticos"} • Fonte: ${s.provider||"—"}.</div>
   </details>`
+}
+
+
+function statsSourceLabel(p){
+  const mode=String(p?.stats?.data_mode||"");
+  const provider=String(p?.stats_provider||p?.stats?.provider||"");
+  if(mode.startsWith("historical-")) return "● ODDS + HIST. 2024";
+  if(mode==="current-season" && provider.toLowerCase().includes("football-data")) return "● ODDS + STATS ATUAIS";
+  if(p.stats_available) return "● ODDS + STATS";
+  return "";
 }
 
 function pickCard(p){
@@ -158,7 +168,7 @@ function pickCard(p){
     : `<div class="metric"><small>Modelo estatístico</small><b class="muted">Sem dados</b></div>`;
   return `<article class="pick">
     <div class="pickTop">
-      <div><div class="league">${p.league} • ${dt(p.commence_time)}</div><div class="teams">${p.home_team} × ${p.away_team}${p.stats_available?'<span class="modelTag">● ODDS + STATS</span>':''}</div></div>
+      <div><div class="league">${p.league} • ${dt(p.commence_time)}</div><div class="teams">${p.home_team} × ${p.away_team}${p.stats_available?`<span class="modelTag">${statsSourceLabel(p)}</span>`:''}</div></div>
       <div class="score"><small>NOTA</small><b>${p.score}</b></div>
     </div>
     <div class="selection">🎯 ${p.selection_name}</div>
@@ -187,7 +197,7 @@ async function scan(){
     $("updated").textContent="Atualizado agora";
     const sm=d.stats||{};
     $("statsStatus").textContent=sm.configured
-      ? `Camada estatística ativa • ${sm.enriched||0} oportunidades enriquecidas nesta análise`
+      ? `Camada estatística ativa • ${sm.enriched||0} oportunidades enriquecidas${sm.primary_provider?" • atual: "+sm.primary_provider:""}`
       : "Camada estatística ainda não configurada no servidor — análise usando somente as odds.";
     $("picks").innerHTML=d.picks.length?d.picks.map(pickCard).join(""):'<div class="empty">Nenhuma entrada passou no filtro de valor agora. Isso é melhor do que forçar um palpite ruim.</div>';
   }catch(e){
